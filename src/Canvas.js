@@ -24,23 +24,20 @@ class Camera {
     zoomOut(factor) { this.z /= factor; }
 }
 
-function Canvas() {
+function Canvas({
+  nodes,
+  setNodes,
+  edges,
+  setEdges,
+  selectedNode,
+  setSelectedNode
+}) {
     const canvasRef = useRef(null);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-    const [nodes, setNodes] = useState([
-        { label: "A", number: 0, x: -100, y: 50 },
-        { label: "B", number: 1, x: 100, y: -50 },
-        { label: "C", number: 2, x: -1000, y: -500 },
-    ]);
-    const [edges, setEdges] = useState([
-        { origin: 0, destination: 1 },
-        { origin: 2, destination: 0 }
-    ]);
 
     const cameraRef = useRef(new Camera(0, 0, 1, 0, 0));
     const draggingNodeRef = useRef(null);
     const lastPosRef = useRef({ x: 0, y: 0 });
-    const [selectedNode, setSelectedNode] = useState(null);
 
     const radius = 50;
 
