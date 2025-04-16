@@ -1,0 +1,31 @@
+.graph-header{
+  position: relative;
+  display: flex;
+  background-color: #F5F5F5;
+  margin: 8px 18px 0px 18px;
+  padding: 10px;
+}
+
+.btn-outline-lb{
+  color: #0E95DD !important;
+  border: 1px solid #0E95DD !important;
+  border-radius: 10px !important;
+}
+
+.btn-outline-lb:hover,
+.btn-outline-lb:focus,
+.btn-outline-lb:active {
+  background-color: #0E95DD !important;
+  color: white !important;
+  border-color: #0E95DD !important;
+}
+
+.header-text{
+}
+
+.header-buttons {
+  margin-left: auto;
+  display: flex;
+  gap: 10px; /* space between buttons */
+  align-items: center;
+}

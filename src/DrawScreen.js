@@ -1,13 +1,13 @@
 import React from 'react'
-import Canvas from './Canvas'
-import Toolbar from './Toolbar';
+import Board from './Board'
+import GraphHeader from './GraphHeader';
 
 function DrawScreen() {
   return(
-      <>
-          <Toolbar />
-          <Canvas width={2300} height={800} />
-      </>
+    <>
+      <GraphHeader/>
+      <Board/>
+    </>
   )
 }
 
