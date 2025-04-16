@@ -4,15 +4,15 @@ import GraphHeader from './GraphHeader';
 
 function DrawScreen() {
   const [nodes, setNodes] = useState([
-    { label: "A", number: 0, x: -100, y: 50 },
-    { label: "B", number: 1, x: 100, y: -50 },
-    { label: "C", number: 2, x: -1000, y: -500 },
+    { id: 1, label: "A", number: 0, x: -100, y: 50, geometry: 'circle', color: 0xFFFFFF },
+    { id: 2, label: "B", number: 1, x: 100, y: -50, geometry: 'circle', color: 0xFFFFFF },
+    { id: 3, label: "C", number: 2, x: -1000, y: -500, geometry: 'circle', color: 0xFFFFFF },
   ]);
   const [edges, setEdges] = useState([
     { origin: 0, destination: 1 },
     { origin: 2, destination: 0 }
   ]);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   return(
     <>
@@ -22,8 +22,8 @@ function DrawScreen() {
         setNodes={setNodes}
         edges={edges}
         setEdges={setEdges}
-        selectedNode={selectedNode}
-        setSelectedNode={setSelectedNode}
+        selectedNodeId={selectedNodeId}
+        setSelectedNodeId={setSelectedNodeId}
       />
     </>
   )

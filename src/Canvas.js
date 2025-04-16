@@ -29,8 +29,8 @@ function Canvas({
   setNodes,
   edges,
   setEdges,
-  selectedNode,
-  setSelectedNode
+  selectedNodeId,
+  setSelectedNodeId
 }) {
     const canvasRef = useRef(null);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -65,7 +65,7 @@ function Canvas({
     useEffect(() => {
         const ctx = canvasRef.current.getContext("2d");
         draw(ctx);
-    }, [selectedNode, nodes, edges, canvasSize]);
+    }, [selectedNodeId, nodes, edges, canvasSize]);
 
     function drawCenterCross(ctx) {
         ctx.save();
@@ -124,10 +124,7 @@ function Canvas({
         const { x, y, label } = node;
 
         ctx.save();
-        if (
-            selectedNode?.label === label &&
-            selectedNode?.number === node.number
-        ) {
+        if (selectedNodeId === node.id) {
             ctx.strokeStyle = "#0E95DD";
             ctx.lineWidth = 5;
         }
@@ -253,7 +250,8 @@ function Canvas({
                     break;
                 }
             }
-            setSelectedNode(found);
+
+            setSelectedNodeId((!found) ? null : found.id);
         } else if (pressed === 1) {
             lastPosRef.current.x = e.clientX;
             lastPosRef.current.y = e.clientY;
