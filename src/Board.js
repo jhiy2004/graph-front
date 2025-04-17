@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Canvas from './Canvas';
 import Toolbar from './Toolbar';
 import './Board.css';
@@ -14,11 +14,16 @@ function Board({
   setSelectedNodeId
 }) {
   const sectionRef = useRef(null);
+  const [zoomAction, setZoomAction] = useState(null);
+  const [dragMode, setDragMode] = useState(false);
 
   return (
     <section className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start" ref={sectionRef}>
       <div className="z-1 flex-grow-0 mt-1 ms-1">
-        <Toolbar />
+        <Toolbar setZoomAction={setZoomAction}
+          dragMode={dragMode}
+          setDragMode={setDragMode}
+        />
       </div>
       <Canvas 
         nodes={nodes}
@@ -27,6 +32,9 @@ function Board({
         setEdges={setEdges}
         selectedNodeId={selectedNodeId}
         setSelectedNodeId={setSelectedNodeId}
+        zoomAction={zoomAction}
+        setZoomAction={setZoomAction}
+        dragMode={dragMode}
       />
       {selectedNodeId && (
         <div className="z-1 ms-auto me-1 mt-1">
