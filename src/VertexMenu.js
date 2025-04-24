@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Form from 'react-bootstrap/Form';
 
 function VertexMenu({nodes, selectedNodeId, setNodes}){

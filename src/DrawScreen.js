@@ -1,8 +1,10 @@
 import React, {useState} from 'react'
 import Board from './Board'
 import GraphHeader from './GraphHeader';
+import NavBarGraph from './NavBarGraph';
 
 function DrawScreen() {
+  const [logged, setLogged] = useState(true);
   const [nodes, setNodes] = useState([
     { id: 1, label: "A", number: 0, x: -100, y: 50, geometry: 'circle', color: 0xFFFFFF },
     { id: 2, label: "B", number: 1, x: 100, y: -50, geometry: 'square', color: 0xFFFFFF },
@@ -16,6 +18,9 @@ function DrawScreen() {
 
   return(
     <>
+      <NavBarGraph 
+        logged={logged} 
+      />
       <GraphHeader/>
       <Board
         nodes={nodes}
