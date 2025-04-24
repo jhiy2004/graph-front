@@ -5,8 +5,8 @@ import GraphHeader from './GraphHeader';
 function DrawScreen() {
   const [nodes, setNodes] = useState([
     { id: 1, label: "A", number: 0, x: -100, y: 50, geometry: 'circle', color: 0xFFFFFF },
-    { id: 2, label: "B", number: 1, x: 100, y: -50, geometry: 'circle', color: 0xFFFFFF },
-    { id: 3, label: "C", number: 2, x: -1000, y: -500, geometry: 'circle', color: 0xFFFFFF },
+    { id: 2, label: "B", number: 1, x: 100, y: -50, geometry: 'square', color: 0xFFFFFF },
+    { id: 3, label: "C", number: 2, x: -300, y: -50, geometry: 'triangle', color: 0xFFFFFF },
   ]);
   const [edges, setEdges] = useState([
     { origin: 0, destination: 1 },

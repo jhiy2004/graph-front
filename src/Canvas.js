@@ -42,7 +42,11 @@ function Canvas({
   const draggingNodeRef = useRef(null);
   const lastPosRef = useRef({ x: 0, y: 0 });
 
-  const radius = 50;
+  const SHAPE_SIZES = {
+    circle: 50,
+    square: 100,
+    triangle: 100
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -130,14 +134,68 @@ function Canvas({
     ctx.restore();
   }
 
+  function strokeSquareCenter(ctx, x, y, side){
+    ctx.save();
+
+    ctx.fillStyle = "#FFFFFF";
+
+    const newX = x - side/2;
+    const newY = y - side/2;
+
+    ctx.fillRect(newX, newY, side, side);
+    ctx.strokeRect(newX, newY, side, side);
+
+    ctx.restore();
+  }
+
+  function strokeTriangleCenter(ctx, x, y, side){
+    ctx.save();
+
+    ctx.fillStyle = "#FFFFFF";
+
+    const height = (Math.sqrt(3) * side) / 2;
+    const points = {
+      left: {
+        x: x - side/2,
+        y: y - height/2
+      },
+      upper: {
+        x: x,
+        y: y + height/2
+      },
+
+      right: {
+        x: x + side/2,
+        y: y - height/2
+      }
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(points.left.x, points.left.y);
+    ctx.lineTo(points.upper.x, points.upper.y);
+    ctx.lineTo(points.right.x, points.right.y);
+    ctx.closePath();
+
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
   function strokeCircleCenter(ctx, x, y, radius) {
+    ctx.save();
+
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fill();
     ctx.stroke();
+
+    ctx.restore();
   }
 
   function drawGraphNode(ctx, node) {
-    const { x, y, label } = node;
+    const { x, y, label, geometry } = node;
 
     ctx.save();
     if (selectedNodeId === node.id) {
@@ -145,35 +203,36 @@ function Canvas({
       ctx.lineWidth = 5;
     }
 
-    strokeCircleCenter(ctx, x, y, radius);
+    // Draw the shape
+    if (geometry === 'circle') {
+      strokeCircleCenter(ctx, x, y, SHAPE_SIZES.circle);
+    } else if (geometry === 'square') {
+      strokeSquareCenter(ctx, x, y, SHAPE_SIZES.square);
+    } else if (geometry === 'triangle') {
+      strokeTriangleCenter(ctx, x, y, SHAPE_SIZES.triangle);
+    }
     ctx.restore();
 
+    // Text styling
     ctx.save();
     ctx.scale(1, -1);
-    const textMetrics = ctx.measureText(label);
-    const textWidth = textMetrics.width;
-    const ascent = textMetrics.actualBoundingBoxAscent;
-    const descent = textMetrics.actualBoundingBoxDescent;
-    const textHeight = ascent + descent;
-    ctx.fillText(label, x - textWidth / 2, -y + textHeight / 2 - descent);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Adjust vertical positioning depending on shape
+    let verticalAdjust = 0;
+    if (geometry === "triangle") {
+      verticalAdjust = SHAPE_SIZES.triangle * 0.1; // nudge upward for triangle
+    }
+
+    ctx.fillText(label, x, -y + verticalAdjust);
     ctx.restore();
   }
 
   function connectNodes(ctx, a, b) {
-    const dx = b.x - a.x;
-    const dy = b.y - a.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const ux = dx / dist;
-    const uy = dy / dist;
-
-    const startX = a.x + ux * radius;
-    const startY = a.y + uy * radius;
-    const endX = b.x - ux * radius;
-    const endY = b.y - uy * radius;
-
     ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(endX, endY);
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
     ctx.stroke();
   }
 
@@ -219,12 +278,59 @@ function Canvas({
     };
   }
 
-  function isMouseOverNode(mouse) {
-    return nodes.some(node => {
-      const dx = mouse.x - node.x;
-      const dy = mouse.y - node.y;
-      return dx ** 2 + dy ** 2 <= radius ** 2;
-    });
+  function isMouseOverCircle(mouse, node){
+    const dx = mouse.x - node.x;
+    const dy = mouse.y - node.y;
+
+    const hip = Math.sqrt(dx ** 2 + dy ** 2);  
+    return hip <= SHAPE_SIZES['circle'];
+  }
+
+  function isMouseOverSquare(mouse, node){
+    const dx = mouse.x - node.x;
+    const dy = mouse.y - node.y;
+
+    const halfSize = SHAPE_SIZES['square']/2;
+    return(
+      dx >= -halfSize &&
+        dx <= halfSize &&
+        dy >= -halfSize &&
+        dy <= +halfSize
+    );
+  }
+
+  function isMouseOverTriangle(mouse, node){
+    const dx = mouse.x - node.x;
+    const dy = mouse.y - node.y;
+
+    const size = SHAPE_SIZES['triangle'];
+    const height = (Math.sqrt(3) / 2) * size;
+    const halfSize = size / 2;
+
+    if(
+      dx >= -halfSize &&
+        dx <= halfSize &&
+        dy >= -height/2 &&
+        dy <= height/2
+    ){
+      const yFromTop = dy + height / 2;
+      const maxY = Math.sqrt(3) * (halfSize - Math.abs(dx));
+
+      return yFromTop <= maxY;}
+  }
+
+  function isMouseOverNode(mouse, node) {
+    if(node.geometry === 'circle'){
+      return isMouseOverCircle(mouse, node);
+    }else if(node.geometry === 'square'){
+      return isMouseOverSquare(mouse, node);
+    }else if (node.geometry === 'triangle') {
+      return isMouseOverTriangle(mouse, node);
+    }
+  }
+
+  function isMouseOverSomeNode(mouse) {
+    return nodes.some(node => isMouseOverNode(mouse, node));
   }
 
   function isMouseOverEdge(mouse) {
@@ -258,9 +364,7 @@ function Canvas({
     if (pressed === 0 && !dragMode) {
       let found = null;
       for (const node of nodes) {
-        const dx = mouse.x - node.x;
-        const dy = mouse.y - node.y;
-        if (dx ** 2 + dy ** 2 <= radius ** 2) {
+        if (isMouseOverNode(mouse, node)) {
           draggingNodeRef.current = node;
           found = node;
           break;
@@ -277,9 +381,8 @@ function Canvas({
   function onMouseMove(e) {
     const pressed = e.buttons;
     const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    const overNode = isMouseOverNode(mouse);
+    const overNode = isMouseOverSomeNode(mouse);
     const overEdge = isMouseOverEdge(mouse);
-
 
     if(dragMode){
       canvasRef.current.style.cursor = "grab";
