@@ -1,8 +1,7 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import Image from 'react-bootstrap/Image';
-import './NavBarGraph.css';
+import './NavbarGraph.css';
 
 function NavBarGraph({logged}) {
     const dropdownItems = (logged) ? (

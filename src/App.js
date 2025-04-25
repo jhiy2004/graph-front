@@ -1,5 +1,5 @@
 import React from 'react'
-import DrawScreen from './DrawScreen'
+import DrawScreen from './pages/DrawScreen.js'
 
 function App() {
   return(

@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
+import Matrix from '../Matrix/Matrix.js';
 import "./MatrixModal.css"
-import Matrix from './Matrix';
 
 function MatrixModal({showMatrix, setShowMatrix}){
     const handleClose = () => {setShowMatrix(false)};

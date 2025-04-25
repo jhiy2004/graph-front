@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
-import Canvas from './Canvas';
-import Toolbar from './Toolbar';
+import Canvas from '../Canvas/Canvas.js';
+import Toolbar from '../Toolbar/Toolbar.js';
+import AlgorithmsBar from '../AlgorithmsBar/AlgorithmsBar.js';
+import VertexMenu from '../VertexMenu/VertexMenu.js';
+
 import './Board.css';
-import AlgorithmsBar from './AlgorithmsBar';
-import VertexMenu from './VertexMenu';
 
 function Board({
   nodes,
@@ -11,7 +12,8 @@ function Board({
   edges,
   setEdges,
   selectedNodeId,
-  setSelectedNodeId
+  setSelectedNodeId,
+  setShowMatrix
 }) {
   const sectionRef = useRef(null);
   const [zoomAction, setZoomAction] = useState(null);
@@ -46,7 +48,9 @@ function Board({
         </div>
       )}
       <div className="z-1 flex-grow-1 mx-1 mb-1 align-self-end w-100">
-        <AlgorithmsBar/>
+        <AlgorithmsBar
+          setShowMatrix={setShowMatrix}
+        />
       </div>
     </section>
   );

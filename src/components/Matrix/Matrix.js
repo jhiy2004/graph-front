@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MatrixBorder from './MatrixBorder';
-import MatrixRow from './MatrixRow';
+import MatrixBorder from '../MatrixBorder/MatrixBorder.js';
+import MatrixRow from '../MatrixRow/MatrixRow.js';
 
 function Matrix() {
     const size = 64;

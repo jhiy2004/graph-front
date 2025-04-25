@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
-import Board from './Board'
-import GraphHeader from './GraphHeader';
-import NavBarGraph from './NavBarGraph';
+import Board from '../components/Board/Board.js'
+import GraphHeader from '../components/GraphHeader/GraphHeader.js';
+import NavbarGraph from '../components/NavbarGraph/NavbarGraph.js';
+import MatrixModal from "../components/MatrixModal/MatrixModal.js";
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
@@ -16,9 +17,11 @@ function DrawScreen() {
   ]);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
 
+  const [showMatrix, setShowMatrix] = useState(false);
+
   return(
     <>
-      <NavBarGraph 
+      <NavbarGraph 
         logged={logged} 
       />
       <GraphHeader/>
@@ -29,6 +32,12 @@ function DrawScreen() {
         setEdges={setEdges}
         selectedNodeId={selectedNodeId}
         setSelectedNodeId={setSelectedNodeId}
+        setShowMatrix={setShowMatrix}
+      />
+
+      <MatrixModal
+        showMatrix={showMatrix}
+        setShowMatrix={setShowMatrix}
       />
     </>
   )
