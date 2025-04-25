@@ -28,13 +28,11 @@ function NavBarGraph({logged}) {
                 align="end"
                 className="no-caret ms-auto me-3"
                 title={
-                    <Image
-                        src="https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
-                        roundedCircle
-                        width={32}
-                        height={32}
-                        alt="User"
-                    />
+                    <div className="rounded-circle bg-white p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                        </svg>
+                    </div>
                 }
             >
             {dropdownItems}
