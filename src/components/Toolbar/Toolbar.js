@@ -7,9 +7,9 @@ import './Toolbar.css';
 function Toolbar({setZoomAction, dragMode, setDragMode}) {
     return (
         <Stack className="toolbar rounded-3">
+            <ToolButton icon='circle'/>
             <ToolButton icon='square'/>
             <ToolButton icon='triangle'/>
-            <ToolButton icon='circle'/>
             <ToolButton icon='edge'/>
             <ToolButton icon='drag' active={dragMode} onClick={() => setDragMode(!dragMode)}/>
             <ToolButton icon='zoomin' onClick={() => setZoomAction('zoomIn')}/>
