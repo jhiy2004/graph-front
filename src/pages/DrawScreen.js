@@ -15,7 +15,6 @@ function DrawScreen() {
     { origin: 0, destination: 1 },
     { origin: 2, destination: 0 }
   ]);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   const [showMatrix, setShowMatrix] = useState(false);
 
@@ -30,8 +29,6 @@ function DrawScreen() {
         setNodes={setNodes}
         edges={edges}
         setEdges={setEdges}
-        selectedNodeId={selectedNodeId}
-        setSelectedNodeId={setSelectedNodeId}
         setShowMatrix={setShowMatrix}
       />
 

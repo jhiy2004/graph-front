@@ -11,7 +11,7 @@ import CircleIcon from '../../assets/icons/CircleIcon/CircleIcon.js';
 
 import './ToolButton.css'
 
-function ToolButton({icon, onClick, active=false}){
+function ToolButton({icon, onClick, active=false, draggable=false, onDragStart, onDragEnd }){
     const icons = {
         'square': <SquareIcon/>,
         'triangle': <TriangleIcon/>,
@@ -29,7 +29,12 @@ function ToolButton({icon, onClick, active=false}){
     const ToolIcon = getIcons(icon);
 
     return (
-        <Button variant={(!active) ? 'tool' : 'tool-active'} onClick={onClick}>
+        <Button draggable={draggable}
+            variant={(!active) ? 'tool' : 'tool-active'}
+            onClick={onClick}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+        >
             {ToolIcon}
         </Button>
     );

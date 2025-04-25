@@ -4,15 +4,11 @@ class Camera {
   x;
   y;
   z;
-  width;
-  height;
 
-  constructor(x, y, z, width, height) {
+  constructor(x, y, z) {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.width = width;
-    this.height = height;
   }
 
   moveLeft(offset) { this.x += offset; }
@@ -29,11 +25,15 @@ function Canvas({
   setNodes,
   edges,
   setEdges,
-  selectedNodeId,
-  setSelectedNodeId,
+  selectedNodeNumber,
+  setSelectedNodeNumber,
   zoomAction,
   setZoomAction,
-  dragMode
+  dragMode,
+  dragPreviewNode,
+  setDragPreviewNode,
+  lastNodeNumber,
+  setLastNodeNumber
 }) {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -72,7 +72,7 @@ function Canvas({
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     draw(ctx);
-  }, [selectedNodeId, nodes, edges, canvasSize]);
+  }, [selectedNodeNumber, nodes, edges, dragPreviewNode, canvasSize]);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
@@ -198,7 +198,7 @@ function Canvas({
     const { x, y, label, geometry } = node;
 
     ctx.save();
-    if (selectedNodeId === node.id) {
+    if (selectedNodeNumber === node.number) {
       ctx.strokeStyle = "#0E95DD";
       ctx.lineWidth = 5;
     }
@@ -263,6 +263,13 @@ function Canvas({
 
     for (const node of nodes) {
       drawGraphNode(ctx, node);
+    }
+
+    if (dragPreviewNode) {
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      drawGraphNode(ctx, dragPreviewNode);
+      ctx.restore();
     }
 
     ctx.restore();
@@ -371,7 +378,7 @@ function Canvas({
         }
       }
 
-      setSelectedNodeId((!found) ? null : found.id);
+      setSelectedNodeNumber((!found) ? null : found.number);
     } else if (pressed === 1 || (pressed === 0 && dragMode)) {
       lastPosRef.current.x = e.clientX;
       lastPosRef.current.y = e.clientY;
@@ -433,6 +440,37 @@ function Canvas({
     draw(canvasRef.current.getContext("2d"));
   }
 
+  function onDragOver(e){
+    e.preventDefault();
+    try {
+      const json = e.dataTransfer.getData("application/json");
+      const data = JSON.parse(json);
+      const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+      data.x = mouse.x;
+      data.y = mouse.y;
+      setDragPreviewNode(data);
+    } catch (err) {
+      console.error("Failed to parse JSON drag data", err);
+    }
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    try {
+      const json = e.dataTransfer.getData("application/json");
+      const data = JSON.parse(json);
+      const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+      data.x = mouse.x;
+      data.y = mouse.y;
+
+      setNodes(prev => [...prev, data]);
+      setLastNodeNumber(lastNodeNumber+1);
+    } catch (err) {
+      console.error("Failed to parse JSON drag data", err);
+    }
+    setDragPreviewNode(null);
+  }
+
   return (
     <canvas
       ref={canvasRef}
@@ -440,6 +478,8 @@ function Canvas({
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onWheel={onWheel}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
     />
   );
 }

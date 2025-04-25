@@ -1,12 +1,12 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 
-function VertexMenu({nodes, selectedNodeId, setNodes}){
-  const selectedNode = nodes.find(node => node.id === selectedNodeId);
+function VertexMenu({nodes, selectedNodeNumber, setNodes}){
+  const selectedNode = nodes.find(node => node.number === selectedNodeNumber);
 
 function onChange(field, value) {
   setNodes(nodes.map(node => {
-    if (node.id === selectedNodeId) {
+    if (node.number === selectedNodeNumber) {
       if (['x', 'y', 'number'].includes(field)) {
         if (value === '' || value === '-' || value === '+') {
           return { ...node, [field]: value }; // Let user type freely
