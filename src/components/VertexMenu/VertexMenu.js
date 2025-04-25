@@ -1,70 +1,86 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 
-function VertexMenu({nodes, selectedNodeNumber, setNodes}){
+function VertexMenu({ nodes, selectedNodeNumber, setNodes }) {
   const selectedNode = nodes.find(node => node.number === selectedNodeNumber);
 
-function onChange(field, value) {
-  setNodes(nodes.map(node => {
-    if (node.number === selectedNodeNumber) {
-      if (['x', 'y', 'number'].includes(field)) {
-        if (value === '' || value === '-' || value === '+') {
-          return { ...node, [field]: value }; // Let user type freely
+  function onChange(field, value) {
+    setNodes(nodes.map(node => {
+      if (node.number === selectedNodeNumber) {
+        if (['x', 'y', 'number'].includes(field)) {
+          if (value === '' || value === '-' || value === '+') {
+            return { ...node, [field]: value }; // Allow typing
+          }
+
+          const parsed = Number(value);
+          if (!Number.isNaN(parsed) && Number.isInteger(parsed)) {
+            return { ...node, [field]: parsed };
+          }
+
+          return node; // Ignore non-integer input
         }
 
-        const parsed = Number(value);
-        if (!Number.isNaN(parsed)) {
-          return { ...node, [field]: parsed };
-        }
-
-        return node; // Invalid value, do nothing
+        return {
+          ...node,
+          [field]: value
+        };
       }
+      return node;
+    }));
+  }
 
-      return {
-        ...node,
-        [field]: value
-      };
-    }
-    return node;
-  }));
-}
-  
-  return(
+  return (
     <section className="p-2 border border-primary bg-white">
       <p className="fw-bold">Atributos</p>
       <Form>
         <Form.Group className="mb-3">
           <Form.Label className="mb-0">Numero</Form.Label>
-          <Form.Control type="number"
+          <Form.Control
+            disabled
+            type="number"
             className="form-control-sm"
-            value={selectedNode?.number}
-            onChange={e => onChange('number', e.target.value)}
+            value={
+              typeof selectedNode?.number === 'number'
+                ? Math.trunc(selectedNode.number)
+                : selectedNode?.number ?? ''
+            }
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label className="mb-0">Nome</Form.Label>
-          <Form.Control type="text"
+          <Form.Control
+            type="text"
             className="form-control-sm"
-            value={selectedNode?.label}
+            value={selectedNode?.label ?? ''}
             onChange={e => onChange('label', e.target.value)}
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label className="mb-0">X</Form.Label>
-          <Form.Control type="number"
+          <Form.Control
+            type="number"
             className="form-control-sm"
-            value={selectedNode?.x}
+            value={
+              typeof selectedNode?.x === 'number'
+                ? Math.trunc(selectedNode.x)
+                : selectedNode?.x ?? ''
+            }
             onChange={e => onChange('x', e.target.value)}
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label className="mb-0">Y</Form.Label>
-          <Form.Control type="number"
+          <Form.Control
+            type="number"
             className="form-control-sm"
-            value={selectedNode?.y} 
+            value={
+              typeof selectedNode?.y === 'number'
+                ? Math.trunc(selectedNode.y)
+                : selectedNode?.y ?? ''
+            }
             onChange={e => onChange('y', e.target.value)}
           />
         </Form.Group>
@@ -87,16 +103,11 @@ function onChange(field, value) {
           <Form.Control
             type="color"
             className="ms-auto form-control-sm"
-            value={
-              '#' + (selectedNode?.color?.toString(16).padStart(6, '0') ?? '000000')
-            }
-            onChange={e =>
-              onChange('color', parseInt(e.target.value.replace('#', ''), 16))
-            }
+            value={selectedNode?.color ?? '#000000'}
+            onChange={e => onChange('color', e.target.value)}
           />
         </Form.Group>
       </Form>
-
     </section>
   );
 }

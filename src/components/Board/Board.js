@@ -18,7 +18,7 @@ function Board({
 
   const [selectedNodeNumber, setSelectedNodeNumber] = useState(null);
   const [dragMode, setDragMode] = useState(false);
-  const [dragPreviewNode, setDragPreviewNode] = useState(null);
+  const [dragPreviewTemplate, setDragPreviewTemplate] = useState(null);
 
   const [lastNodeNumber, setLastNodeNumber] = useState(0);
 
@@ -33,7 +33,7 @@ function Board({
         <Toolbar setZoomAction={setZoomAction}
           dragMode={dragMode}
           setDragMode={setDragMode}
-          setDragPreviewNode={setDragPreviewNode}
+          setDragPreviewTemplate={setDragPreviewTemplate}
           lastNodeNumber={lastNodeNumber}
         />
       </div>
@@ -47,8 +47,8 @@ function Board({
         zoomAction={zoomAction}
         setZoomAction={setZoomAction}
         dragMode={dragMode}
-        dragPreviewNode={dragPreviewNode}
-        setDragPreviewNode={setDragPreviewNode}
+        dragPreviewTemplate={dragPreviewTemplate}
+        setDragPreviewTemplate={setDragPreviewTemplate}
         lastNodeNumber={lastNodeNumber}
         setLastNodeNumber={setLastNodeNumber}
       />

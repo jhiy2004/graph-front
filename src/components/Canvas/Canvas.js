@@ -30,13 +30,14 @@ function Canvas({
   zoomAction,
   setZoomAction,
   dragMode,
-  dragPreviewNode,
-  setDragPreviewNode,
+  dragPreviewTemplate,
+  setDragPreviewTemplate,
   lastNodeNumber,
-  setLastNodeNumber
+  setLastNodeNumber,
 }) {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [dragPreviewNode, setDragPreviewNode] = useState(null);
 
   const cameraRef = useRef(new Camera(0, 0, 1, 0, 0));
   const draggingNodeRef = useRef(null);
@@ -134,10 +135,10 @@ function Canvas({
     ctx.restore();
   }
 
-  function strokeSquareCenter(ctx, x, y, side){
+  function strokeSquareCenter(ctx, x, y, color, side){
     ctx.save();
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = color;
 
     const newX = x - side/2;
     const newY = y - side/2;
@@ -148,10 +149,10 @@ function Canvas({
     ctx.restore();
   }
 
-  function strokeTriangleCenter(ctx, x, y, side){
+  function strokeTriangleCenter(ctx, x, y, color, side){
     ctx.save();
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = color;
 
     const height = (Math.sqrt(3) * side) / 2;
     const points = {
@@ -182,12 +183,12 @@ function Canvas({
     ctx.restore();
   }
 
-  function strokeCircleCenter(ctx, x, y, radius) {
+  function strokeCircleCenter(ctx, x, y, color, radius) {
     ctx.save();
 
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = color;
     ctx.fill();
     ctx.stroke();
 
@@ -195,7 +196,7 @@ function Canvas({
   }
 
   function drawGraphNode(ctx, node) {
-    const { x, y, label, geometry } = node;
+    const { x, y, color, label, geometry } = node;
 
     ctx.save();
     if (selectedNodeNumber === node.number) {
@@ -205,11 +206,11 @@ function Canvas({
 
     // Draw the shape
     if (geometry === 'circle') {
-      strokeCircleCenter(ctx, x, y, SHAPE_SIZES.circle);
+      strokeCircleCenter(ctx, x, y, color, SHAPE_SIZES.circle);
     } else if (geometry === 'square') {
-      strokeSquareCenter(ctx, x, y, SHAPE_SIZES.square);
+      strokeSquareCenter(ctx, x, y, color, SHAPE_SIZES.square);
     } else if (geometry === 'triangle') {
-      strokeTriangleCenter(ctx, x, y, SHAPE_SIZES.triangle);
+      strokeTriangleCenter(ctx, x, y, color, SHAPE_SIZES.triangle);
     }
     ctx.restore();
 
@@ -443,12 +444,14 @@ function Canvas({
   function onDragOver(e){
     e.preventDefault();
     try {
-      const json = e.dataTransfer.getData("application/json");
-      const data = JSON.parse(json);
       const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-      data.x = mouse.x;
-      data.y = mouse.y;
-      setDragPreviewNode(data);
+
+      setDragPreviewNode({
+        ...dragPreviewTemplate,
+        x: mouse.x,
+        y: mouse.y
+      });
+
     } catch (err) {
       console.error("Failed to parse JSON drag data", err);
     }
@@ -456,18 +459,23 @@ function Canvas({
 
   function onDrop(e) {
     e.preventDefault();
-    try {
-      const json = e.dataTransfer.getData("application/json");
-      const data = JSON.parse(json);
-      const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-      data.x = mouse.x;
-      data.y = mouse.y;
+    if(!dragPreviewTemplate) return;
 
-      setNodes(prev => [...prev, data]);
-      setLastNodeNumber(lastNodeNumber+1);
-    } catch (err) {
-      console.error("Failed to parse JSON drag data", err);
-    }
+    const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+
+    setDragPreviewNode({
+      ...dragPreviewTemplate,
+      x: mouse.x,
+      y: mouse.y
+    });
+
+    setNodes(prev => [...prev, dragPreviewNode]);
+    setLastNodeNumber(lastNodeNumber + 1);
+    setDragPreviewTemplate(null);
+    setDragPreviewNode(null);
+  }
+
+  function onDragLeave(e){
     setDragPreviewNode(null);
   }
 
@@ -480,6 +488,7 @@ function Canvas({
       onWheel={onWheel}
       onDrop={onDrop}
       onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
     />
   );
 }

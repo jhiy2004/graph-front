@@ -4,9 +4,10 @@ import ToolButton from '../ToolButton/ToolButton.js';
 
 import './Toolbar.css';
 
-function Toolbar({setZoomAction, dragMode, setDragMode, setDragPreviewNode, lastNodeNumber}) {
+function Toolbar({setZoomAction, dragMode, setDragMode, setDragPreviewTemplate, lastNodeNumber }) {
     function onDragStart(e, type){
-        e.dataTransfer.setData("application/json", JSON.stringify({ id: null, label: "New node", number: lastNodeNumber+1, x: 0, y: 0, geometry: type, color: "#FFFFFF"}));
+        const newNumber = lastNodeNumber+1;
+        setDragPreviewTemplate({ id: null, label: `${newNumber}`, number: newNumber, x: 0, y: 0, geometry: type, color: "#FFFFFF"});
 
         const img = document.createElement('canvas');
         img.width = img.height = 1;
@@ -14,7 +15,7 @@ function Toolbar({setZoomAction, dragMode, setDragMode, setDragPreviewNode, last
     }
 
     function onDragEnd(e){
-        setDragPreviewNode(null);
+        setDragPreviewTemplate(null);
     }
 
     return (
