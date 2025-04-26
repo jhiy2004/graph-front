@@ -12,11 +12,60 @@ function DrawScreen() {
     { id: 3, label: "C", number: 2, x: -300, y: -50, geometry: 'triangle', color: "#FFFFFF" },
   ]);
   const [edges, setEdges] = useState([
-    { origin: 0, destination: 1 },
-    { origin: 2, destination: 0 }
+    { id: 1, weight: 1, origin: 0, destination: 1 },
+    { id: 2, weight: 1, origin: 2, destination: 0 }
   ]);
 
   const [showMatrix, setShowMatrix] = useState(false);
+
+  function addNewNode(newNode){
+    setNodes(prev => [...prev, newNode]);
+  }
+
+  function addNewEdge(newEdge) {
+    const exists = edges.some(edge =>
+      (newEdge.origin === edge.origin && newEdge.destination === edge.destination) ||
+      (newEdge.origin === edge.destination && newEdge.destination === edge.origin)
+    );
+  
+    if (!exists) {
+      setEdges([...edges, newEdge]);
+    }
+  }
+
+  function updateNodePosition(nodeNumber, x, y){
+      setNodes(prev =>
+        prev.map(node =>
+          node.number === nodeNumber
+            ? { ...node, x: x, y: y }
+            : node
+        )
+      );
+  }
+
+  function updateNodeField(field, value, nodeNumber) {
+    setNodes(prevNodes =>
+      prevNodes.map(node => {
+        if (node.number === nodeNumber) {
+          if (['x', 'y', 'number'].includes(field)) {
+            if (value === '' || value === '-' || value === '+') {
+              return { ...node, [field]: value };
+            }
+  
+            const parsed = Number(value);
+            if (!Number.isNaN(parsed) && Number.isInteger(parsed)) {
+              return { ...node, [field]: parsed };
+            }
+  
+            return node;
+          }
+  
+          return { ...node, [field]: value };
+        }
+        return node;
+      })
+    );
+  }
 
   return(
     <>
@@ -26,10 +75,12 @@ function DrawScreen() {
       <GraphHeader/>
       <Board
         nodes={nodes}
-        setNodes={setNodes}
         edges={edges}
-        setEdges={setEdges}
         setShowMatrix={setShowMatrix}
+        addNewEdge={addNewEdge}
+        addNewNode={addNewNode}
+        updateNodePosition={updateNodePosition}
+        updateNodeField={updateNodeField}
       />
 
       <MatrixModal

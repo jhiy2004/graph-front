@@ -24,9 +24,7 @@ class Camera {
 
 function Canvas({
   nodes,
-  setNodes,
   edges,
-  setEdges,
   selectedNodeNumber,
   setSelectedNodeNumber,
   zoomAction,
@@ -36,6 +34,11 @@ function Canvas({
   setDragPreviewTemplate,
   lastNodeNumber,
   setLastNodeNumber,
+  edgeModeNodes,
+  setEdgeModeNodes,
+  addNewEdge,
+  addNewNode,
+  updateNodePosition
 }) {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -75,7 +78,7 @@ function Canvas({
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     draw(ctx);
-  }, [selectedNodeNumber, nodes, edges, dragPreviewNode, canvasSize]);
+  }, [selectedNodeNumber, nodes, edges, dragPreviewNode, edgeModeNodes, canvasSize]);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
@@ -203,6 +206,11 @@ function Canvas({
     ctx.save();
     if (selectedNodeNumber === node.number) {
       ctx.strokeStyle = "#0E95DD";
+      ctx.lineWidth = 5;
+    }
+    
+    if (edgeModeNodes.origin?.number === node.number) {
+      ctx.strokeStyle = "#27AE60";
       ctx.lineWidth = 5;
     }
 
@@ -371,7 +379,7 @@ function Canvas({
     const pressed = e.button;
     const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
 
-    if (pressed === 0 && activeMode !== Modes.DRAG) {
+    if (pressed === 0 && activeMode === Modes.NONE) {
       let found = null;
       for (const node of nodes) {
         if (isMouseOverNode(mouse, node)) {
@@ -385,6 +393,30 @@ function Canvas({
     } else if (pressed === 1 || (pressed === 0 && activeMode === Modes.DRAG)) {
       lastPosRef.current.x = e.clientX;
       lastPosRef.current.y = e.clientY;
+    } else if (pressed === 0 && activeMode === Modes.EDGE) {
+      let found = null;
+      for (const node of nodes) {
+        if (isMouseOverNode(mouse, node)) {
+          found = node;
+          break;
+        }
+      }
+    
+      if (found) {
+        if (!edgeModeNodes.origin) {
+          setEdgeModeNodes({ origin: found });
+        } else {
+          const newEdge = {
+            id: null,
+            weight: 1,
+            origin: edgeModeNodes.origin.number,
+            destination: found.number,
+          };
+          addNewEdge(newEdge);
+    
+          setEdgeModeNodes({ origin: null });
+        }
+      }
     }
   }
 
@@ -400,13 +432,7 @@ function Canvas({
       canvasRef.current.style.cursor = overNode || overEdge ? "pointer" : "default";
     }
     if (pressed === 1 && draggingNodeRef.current && activeMode !== Modes.DRAG) {
-      setNodes(prev =>
-        prev.map(node =>
-          node.number === draggingNodeRef.current?.number
-            ? { ...node, x: mouse.x, y: mouse.y }
-            : node
-        )
-      );
+      updateNodePosition(draggingNodeRef.current?.number, mouse.x, mouse.y);
     } else if (pressed === 4 || (pressed === 1 && activeMode === Modes.DRAG)) {
       const offsetX = (e.clientX - lastPosRef.current.x) / cameraRef.current.z;
       const offsetY = (e.clientY - lastPosRef.current.y) / cameraRef.current.z;
@@ -471,7 +497,7 @@ function Canvas({
       y: mouse.y
     });
 
-    setNodes(prev => [...prev, dragPreviewNode]);
+    addNewNode(dragPreviewNode);
     setLastNodeNumber(lastNodeNumber + 1);
     setDragPreviewTemplate(null);
     setDragPreviewNode(null);

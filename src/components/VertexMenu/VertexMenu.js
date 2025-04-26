@@ -2,32 +2,11 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import { Geometry } from '../../utils/geometry.js';
 
-function VertexMenu({ nodes, selectedNodeNumber, setNodes }) {
+function VertexMenu({ nodes, selectedNodeNumber, updateNodeField }) {
   const selectedNode = nodes.find(node => node.number === selectedNodeNumber);
 
   function onChange(field, value) {
-    setNodes(nodes.map(node => {
-      if (node.number === selectedNodeNumber) {
-        if (['x', 'y', 'number'].includes(field)) {
-          if (value === '' || value === '-' || value === '+') {
-            return { ...node, [field]: value }; // Allow typing
-          }
-
-          const parsed = Number(value);
-          if (!Number.isNaN(parsed) && Number.isInteger(parsed)) {
-            return { ...node, [field]: parsed };
-          }
-
-          return node; // Ignore non-integer input
-        }
-
-        return {
-          ...node,
-          [field]: value
-        };
-      }
-      return node;
-    }));
+    updateNodeField(field, value, selectedNodeNumber);
   }
 
   return (

@@ -9,10 +9,12 @@ import './Board.css';
 
 function Board({
   nodes,
-  setNodes,
   edges,
-  setEdges,
-  setShowMatrix
+  setShowMatrix,
+  addNewEdge,
+  addNewNode,
+  updateNodePosition,
+  updateNodeField
 }) {
   const sectionRef = useRef(null);
   const [zoomAction, setZoomAction] = useState(null);
@@ -20,10 +22,15 @@ function Board({
   const [selectedNodeNumber, setSelectedNodeNumber] = useState(null);
   const [activeMode, setActiveMode] = useState(null);
   const [dragPreviewTemplate, setDragPreviewTemplate] = useState(null);
+  const [edgeModeNodes, setEdgeModeNodes] = useState({ origin: null });
 
   const [lastNodeNumber, setLastNodeNumber] = useState(0);
 
   function handleModeChange(newMode){
+    if(activeMode === Modes.EDGE){
+      setEdgeModeNodes({ origin: null });
+    }
+
     setActiveMode(newMode === activeMode ? Modes.NONE : newMode);
   }
 
@@ -44,9 +51,7 @@ function Board({
       </div>
       <Canvas 
         nodes={nodes}
-        setNodes={setNodes}
         edges={edges}
-        setEdges={setEdges}
         selectedNodeNumber={selectedNodeNumber}
         setSelectedNodeNumber={setSelectedNodeNumber}
         zoomAction={zoomAction}
@@ -56,13 +61,18 @@ function Board({
         setDragPreviewTemplate={setDragPreviewTemplate}
         lastNodeNumber={lastNodeNumber}
         setLastNodeNumber={setLastNodeNumber}
+        edgeModeNodes={edgeModeNodes}
+        setEdgeModeNodes={setEdgeModeNodes}
+        addNewEdge={addNewEdge}
+        addNewNode={addNewNode}
+        updateNodePosition={updateNodePosition}
       />
       {selectedNodeNumber !== null && (
         <div className="z-1 ms-auto me-1 mt-1">
           <VertexMenu
             nodes={nodes}
             selectedNodeNumber={selectedNodeNumber}
-            setNodes={setNodes}
+            updateNodeField={updateNodeField}
           />
         </div>
       )}
