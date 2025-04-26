@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Geometry } from "../../utils/geometry.js";
+import { Modes } from "../../utils/modes.js";
 
 class Camera {
   x;
@@ -29,7 +31,7 @@ function Canvas({
   setSelectedNodeNumber,
   zoomAction,
   setZoomAction,
-  dragMode,
+  activeMode,
   dragPreviewTemplate,
   setDragPreviewTemplate,
   lastNodeNumber,
@@ -205,11 +207,11 @@ function Canvas({
     }
 
     // Draw the shape
-    if (geometry === 'circle') {
+    if (geometry === Geometry.CIRCLE) {
       strokeCircleCenter(ctx, x, y, color, SHAPE_SIZES.circle);
-    } else if (geometry === 'square') {
+    } else if (geometry === Geometry.SQUARE) {
       strokeSquareCenter(ctx, x, y, color, SHAPE_SIZES.square);
-    } else if (geometry === 'triangle') {
+    } else if (geometry === Geometry.TRIANGLE) {
       strokeTriangleCenter(ctx, x, y, color, SHAPE_SIZES.triangle);
     }
     ctx.restore();
@@ -222,7 +224,7 @@ function Canvas({
 
     // Adjust vertical positioning depending on shape
     let verticalAdjust = 0;
-    if (geometry === "triangle") {
+    if (geometry === Geometry.TRIANGLE) {
       verticalAdjust = SHAPE_SIZES.triangle * 0.1; // nudge upward for triangle
     }
 
@@ -291,14 +293,14 @@ function Canvas({
     const dy = mouse.y - node.y;
 
     const hip = Math.sqrt(dx ** 2 + dy ** 2);  
-    return hip <= SHAPE_SIZES['circle'];
+    return hip <= SHAPE_SIZES.circle;
   }
 
   function isMouseOverSquare(mouse, node){
     const dx = mouse.x - node.x;
     const dy = mouse.y - node.y;
 
-    const halfSize = SHAPE_SIZES['square']/2;
+    const halfSize = SHAPE_SIZES.square;
     return(
       dx >= -halfSize &&
         dx <= halfSize &&
@@ -311,7 +313,7 @@ function Canvas({
     const dx = mouse.x - node.x;
     const dy = mouse.y - node.y;
 
-    const size = SHAPE_SIZES['triangle'];
+    const size = SHAPE_SIZES.triangle;
     const height = (Math.sqrt(3) / 2) * size;
     const halfSize = size / 2;
 
@@ -328,11 +330,11 @@ function Canvas({
   }
 
   function isMouseOverNode(mouse, node) {
-    if(node.geometry === 'circle'){
+    if(node.geometry === Geometry.CIRCLE){
       return isMouseOverCircle(mouse, node);
-    }else if(node.geometry === 'square'){
+    }else if(node.geometry === Geometry.SQUARE){
       return isMouseOverSquare(mouse, node);
-    }else if (node.geometry === 'triangle') {
+    }else if (node.geometry === Geometry.TRIANGLE) {
       return isMouseOverTriangle(mouse, node);
     }
   }
@@ -369,7 +371,7 @@ function Canvas({
     const pressed = e.button;
     const mouse = screenToCanvas(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
 
-    if (pressed === 0 && !dragMode) {
+    if (pressed === 0 && activeMode !== Modes.DRAG) {
       let found = null;
       for (const node of nodes) {
         if (isMouseOverNode(mouse, node)) {
@@ -380,7 +382,7 @@ function Canvas({
       }
 
       setSelectedNodeNumber((!found) ? null : found.number);
-    } else if (pressed === 1 || (pressed === 0 && dragMode)) {
+    } else if (pressed === 1 || (pressed === 0 && activeMode === Modes.DRAG)) {
       lastPosRef.current.x = e.clientX;
       lastPosRef.current.y = e.clientY;
     }
@@ -392,12 +394,12 @@ function Canvas({
     const overNode = isMouseOverSomeNode(mouse);
     const overEdge = isMouseOverEdge(mouse);
 
-    if(dragMode){
+    if(activeMode === Modes.DRAG){
       canvasRef.current.style.cursor = "grab";
     }else{
       canvasRef.current.style.cursor = overNode || overEdge ? "pointer" : "default";
     }
-    if (pressed === 1 && draggingNodeRef.current && !dragMode) {
+    if (pressed === 1 && draggingNodeRef.current && activeMode !== Modes.DRAG) {
       setNodes(prev =>
         prev.map(node =>
           node.number === draggingNodeRef.current?.number
@@ -405,7 +407,7 @@ function Canvas({
             : node
         )
       );
-    } else if (pressed === 4 || (pressed === 1 && dragMode)) {
+    } else if (pressed === 4 || (pressed === 1 && activeMode === Modes.DRAG)) {
       const offsetX = (e.clientX - lastPosRef.current.x) / cameraRef.current.z;
       const offsetY = (e.clientY - lastPosRef.current.y) / cameraRef.current.z;
       lastPosRef.current.x = e.clientX;

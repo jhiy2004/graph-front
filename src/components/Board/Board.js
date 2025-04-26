@@ -3,6 +3,7 @@ import Canvas from '../Canvas/Canvas.js';
 import Toolbar from '../Toolbar/Toolbar.js';
 import AlgorithmsBar from '../AlgorithmsBar/AlgorithmsBar.js';
 import VertexMenu from '../VertexMenu/VertexMenu.js';
+import { Modes } from '../../utils/modes.js';
 
 import './Board.css';
 
@@ -17,10 +18,14 @@ function Board({
   const [zoomAction, setZoomAction] = useState(null);
 
   const [selectedNodeNumber, setSelectedNodeNumber] = useState(null);
-  const [dragMode, setDragMode] = useState(false);
+  const [activeMode, setActiveMode] = useState(null);
   const [dragPreviewTemplate, setDragPreviewTemplate] = useState(null);
 
   const [lastNodeNumber, setLastNodeNumber] = useState(0);
+
+  function handleModeChange(newMode){
+    setActiveMode(newMode === activeMode ? Modes.NONE : newMode);
+  }
 
   useEffect(() => {
     const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
@@ -31,8 +36,8 @@ function Board({
     <section className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start" ref={sectionRef}>
       <div className="z-1 flex-grow-0 mt-1 ms-1">
         <Toolbar setZoomAction={setZoomAction}
-          dragMode={dragMode}
-          setDragMode={setDragMode}
+          activeMode={activeMode}
+          handleModeChange={handleModeChange}
           setDragPreviewTemplate={setDragPreviewTemplate}
           lastNodeNumber={lastNodeNumber}
         />
@@ -46,7 +51,7 @@ function Board({
         setSelectedNodeNumber={setSelectedNodeNumber}
         zoomAction={zoomAction}
         setZoomAction={setZoomAction}
-        dragMode={dragMode}
+        activeMode={activeMode}
         dragPreviewTemplate={dragPreviewTemplate}
         setDragPreviewTemplate={setDragPreviewTemplate}
         lastNodeNumber={lastNodeNumber}
@@ -71,4 +76,3 @@ function Board({
 }
 
 export default Board;
-

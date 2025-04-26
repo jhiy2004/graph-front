@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
+import { Geometry } from '../../utils/geometry.js';
 
 function VertexMenu({ nodes, selectedNodeNumber, setNodes }) {
   const selectedNode = nodes.find(node => node.number === selectedNodeNumber);
@@ -89,12 +90,12 @@ function VertexMenu({ nodes, selectedNodeNumber, setNodes }) {
           <Form.Label className="mb-0">Geometria</Form.Label>
           <Form.Select
             className="form-select-sm"
-            value={selectedNode?.geometry ?? 'circle'}
+            value={selectedNode?.geometry ?? Geometry.CIRCLE}
             onChange={e => onChange('geometry', e.target.value)}
           >
-            <option value="circle">Circulo</option>
-            <option value="square">Quadrado</option>
-            <option value="triangle">Triangulo</option>
+            <option value={Geometry.CIRCLE}>Circulo</option>
+            <option value={Geometry.SQUARE}>Quadrado</option>
+            <option value={Geometry.TRIANGLE}>Triangulo</option>
           </Form.Select>
         </Form.Group>
 
