@@ -3,6 +3,9 @@ import Board from '../components/Board/Board.js'
 import GraphHeader from '../components/GraphHeader/GraphHeader.js';
 import NavbarGraph from '../components/NavbarGraph/NavbarGraph.js';
 import MatrixModal from "../components/MatrixModal/MatrixModal.js";
+import PathModal from '../components/PathModal/PathModal.js';
+
+import { Algorithms } from '../utils/algorithms.js';
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
@@ -17,6 +20,7 @@ function DrawScreen() {
   ]);
 
   const [showMatrix, setShowMatrix] = useState(false);
+  const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
 
   function addNewNode(newNode){
     setNodes(prev => [...prev, newNode]);
@@ -77,6 +81,7 @@ function DrawScreen() {
         nodes={nodes}
         edges={edges}
         setShowMatrix={setShowMatrix}
+        setActiveAlgorithm={setActiveAlgorithm}
         addNewEdge={addNewEdge}
         addNewNode={addNewNode}
         updateNodePosition={updateNodePosition}
@@ -86,6 +91,13 @@ function DrawScreen() {
       <MatrixModal
         showMatrix={showMatrix}
         setShowMatrix={setShowMatrix}
+      />
+
+      <PathModal
+        activeAlgorithm={activeAlgorithm}
+        setActiveAlgorithm={setActiveAlgorithm}
+        nodes={nodes}
+        edges={edges}
       />
     </>
   )

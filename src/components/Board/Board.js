@@ -11,6 +11,7 @@ function Board({
   nodes,
   edges,
   setShowMatrix,
+  setActiveAlgorithm,
   addNewEdge,
   addNewNode,
   updateNodePosition,
@@ -49,7 +50,8 @@ function Board({
           lastNodeNumber={lastNodeNumber}
         />
       </div>
-      <Canvas 
+      <Canvas
+        className="w-100 h-100 d-block position-absolute" 
         nodes={nodes}
         edges={edges}
         selectedNodeNumber={selectedNodeNumber}
@@ -79,6 +81,7 @@ function Board({
       <div className="z-1 flex-grow-1 mx-1 mb-1 align-self-end w-100">
         <AlgorithmsBar
           setShowMatrix={setShowMatrix}
+          setActiveAlgorithm={setActiveAlgorithm}
         />
       </div>
     </section>

@@ -23,6 +23,7 @@ class Camera {
 }
 
 function Canvas({
+  className,
   nodes,
   edges,
   selectedNodeNumber,
@@ -62,10 +63,6 @@ function Canvas({
       canvas.width = width;
       canvas.height = height;
       setCanvasSize({ width, height });
-
-      const cam = cameraRef.current;
-      cam.width = width;
-      cam.height = height;
 
       draw(canvas.getContext("2d"));
     };
@@ -509,6 +506,7 @@ function Canvas({
 
   return (
     <canvas
+      className={className}
       ref={canvasRef}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
