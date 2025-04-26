@@ -1,0 +1,7 @@
+.navbar-graph{
+    background-color: #32AEE6 !important;
+}
+
+.no-caret .dropdown-toggle::after{
+    display: none !important;
+}
