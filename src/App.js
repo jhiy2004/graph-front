@@ -1,10 +1,19 @@
-import React from 'react'
-import DrawScreen from './pages/DrawScreen.js'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import DrawScreen from "./pages/DrawScreen";
+import LoginForm from "./components/LoginForm/LoginForm";
+import RegisterForm from "./components/RegisterForm/RegisterForm";
 
 function App() {
-  return(
-    <DrawScreen/>
-  )
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<DrawScreen />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<RegisterForm />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
