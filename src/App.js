@@ -1,9 +1,12 @@
 import React from 'react'
-import DrawScreen from './pages/DrawScreen.js'
+import AppRoutes from './routes.js';
+import { BrowserRouter } from 'react-router';
 
 function App() {
   return(
-    <DrawScreen/>
+    <BrowserRouter>
+      <AppRoutes/>
+    </BrowserRouter>
   )
 }
 
