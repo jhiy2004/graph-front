@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
-import Board from '../components/Board/Board.js'
-import GraphHeader from '../components/GraphHeader/GraphHeader.js';
-import NavbarGraph from '../components/NavbarGraph/NavbarGraph.js';
-import MatrixModal from "../components/MatrixModal/MatrixModal.js";
-import PathModal from '../components/PathModal/PathModal.js';
 
-import { Algorithms } from '../utils/algorithms.js';
+import Board from '../../components/Board/Board.js'
+import GraphHeader from '../../components/GraphHeader/GraphHeader.js';
+import NavbarGraph from '../../components/NavbarGraph/NavbarGraph.js';
+import MatrixModal from "../../components/MatrixModal/MatrixModal.js";
+import PathModal from '../../components/PathModal/PathModal.js';
+
+import { Algorithms } from '../../utils/algorithms.js';
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
