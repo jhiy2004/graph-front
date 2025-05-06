@@ -93,7 +93,7 @@ function DrawScreen() {
         showMatrix={showMatrix}
         setShowMatrix={setShowMatrix}
       />
-
+          
       <PathModal
         activeAlgorithm={activeAlgorithm}
         setActiveAlgorithm={setActiveAlgorithm}
