@@ -1,0 +1,27 @@
+.large-modal {
+    width: 90vw !important;
+    max-width: 90vw !important;
+    height: 90vh;
+    max-height: 90vh;
+}
+
+.large-modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.large-modal-content .modal-header,
+.large-modal-content .modal-footer {
+    flex-shrink: 0;
+}
+
+.large-modal-content .modal-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+}
+
+.modal-body>* {
+    flex: 1;
+}
