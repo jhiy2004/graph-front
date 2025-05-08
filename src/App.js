@@ -1,19 +1,13 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DrawScreen from "./pages/DrawScreen";
-import LoginForm from "./components/LoginForm/LoginForm";
-import RegisterForm from "./components/RegisterForm/RegisterForm";
+import React from 'react'
+import AppRoutes from './routes.js';
+import { BrowserRouter } from 'react-router';
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<DrawScreen />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-      </Routes>
-    </Router>
-  );
+  return(
+    <BrowserRouter>
+      <AppRoutes/>
+    </BrowserRouter>
+  )
 }
 
 export default App;
