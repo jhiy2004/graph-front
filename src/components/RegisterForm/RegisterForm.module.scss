@@ -48,13 +48,21 @@
 
 .inputGroup input {
   width: 100%;
-  padding: 10px 12px 10px 35px;
+  padding: 10px 12px 10px 5px;
   border: none;
   border-radius: 20px !important;
   font-size: 14px;
   outline: none;
   color: #333;
   background-color: transparent;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 .primaryBtn {
@@ -65,7 +73,6 @@
   border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
-  margin-bottom: 10px;
   transition: 0.3s;
 }
 
@@ -79,6 +86,5 @@
   color: #0077cc;
   font-size: 14px;
   cursor: pointer;
-  margin-top: 5px;
   text-decoration: underline;
 }

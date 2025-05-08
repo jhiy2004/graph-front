@@ -19,24 +19,27 @@ function LoginForm() {
           <span className={styles.icon}>
             <EmailIcon />
           </span>
-          <input type="email" placeholder="Email" />
+          <input type="email" placeholder="Email" autoComplete="email" />
         </div>
 
         <div className={styles.inputGroup}>
           <span className={styles.icon}>
             <KeyIcon />
           </span>
-          <input type="password" placeholder="Senha" />
+          <input
+            type="password"
+            placeholder="Senha"
+            autoComplete="current-password"
+          />
         </div>
 
-        <button className={styles.primaryBtn}>Entrar</button>
-        <br></br>
-        <button className={styles.linkBtn}>Recuperar Senha</button>
-        <br></br>
-        <button className={styles.linkBtn} onClick={handleBack}>
-          Voltar
-        </button>
-        <br></br>
+        <div className={styles.buttonGroup}>
+          <button className={styles.primaryBtn}>Entrar</button>
+          <button className={styles.linkBtn}>Recuperar Senha</button>
+          <button className={styles.linkBtn} onClick={handleBack}>
+            Voltar
+          </button>
+        </div>
       </div>
     </div>
   );

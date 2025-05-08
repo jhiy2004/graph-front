@@ -37,11 +37,12 @@ function RegisterForm() {
           <input type="password" placeholder="Senha" />
         </div>
 
-        <button className={styles.primaryBtn}>Criar Conta</button>
-        <br></br>
-        <button className={styles.linkBtn} onClick={handleBack}>
-          Voltar
-        </button>
+        <div className={styles.buttonGroup}>
+          <button className={styles.primaryBtn}>Criar Conta</button>
+          <button className={styles.linkBtn} onClick={handleBack}>
+            Voltar
+          </button>
+        </div>
       </div>
     </div>
   );
