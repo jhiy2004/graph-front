@@ -1,0 +1,21 @@
+import React from "react";
+
+function EmailIcon() {
+  return (
+    <svg
+      width="33"
+      height="33"
+      viewBox="0 0 33 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M27.5 5.5H5.5C3.9875 5.5 2.76375 6.7375 2.76375 8.25L2.75 24.75C2.75 26.2625 3.9875 27.5 5.5 27.5H27.5C29.0125 27.5 30.25 26.2625 30.25 24.75V8.25C30.25 6.7375 29.0125 5.5 27.5 5.5ZM27.5 11L16.5 17.875L5.5 11V8.25L16.5 15.125L27.5 8.25V11Z"
+        fill="#1672B5"
+        fillOpacity="0.7"
+      />
+    </svg>
+  );
+}
+
+export default EmailIcon;

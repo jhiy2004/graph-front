@@ -1,0 +1,90 @@
+.authContainer {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #39a8e0, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formBox {
+  background-color: white;
+  border-radius: 30px;
+  padding: 40px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 18% !important;
+  height: 45%;
+  text-align: center;
+}
+
+.formBox h2 {
+  color: #00509d;
+  margin-top: 30px;
+  margin-bottom: 55px;
+  font-size: 38px;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  background-color: #eee;
+  border-radius: 25px;
+  padding: 3px 10px;
+  margin-bottom: 16px;
+}
+
+.inputGroup .icon {
+  left: 12px;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputGroup .icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.inputGroup input {
+  width: 100%;
+  padding: 10px 12px 10px 5px;
+  border: none;
+  border-radius: 20px !important;
+  font-size: 14px;
+  outline: none;
+  color: #333;
+  background-color: transparent;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.primaryBtn {
+  background-color: white;
+  color: #0077cc;
+  border: 1px solid #0077cc;
+  padding: 10px 40px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.primaryBtn:hover {
+  background-color: #f0f8ff;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: #0077cc;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+}
