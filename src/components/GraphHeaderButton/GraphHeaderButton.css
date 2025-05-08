@@ -1,0 +1,25 @@
+.btn-outline-lightblue {
+    padding: 2px 10px;
+    color: #0E95DD;
+    border-radius: 10px;
+    border-color: #0E95DD;
+    background-color: white;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+.btn-outline-lightblue:hover {
+    color: white;
+    background-color: #0E95DD;
+    border-color: #0E95DD;
+}
+
+.btn-outline-lightblue > svg {
+    fill: #0E95DD;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-lightblue:hover > svg {
+    fill: white;
+}
