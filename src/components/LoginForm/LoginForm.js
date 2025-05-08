@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import "./LoginForm.css";
+import EmailIcon from "../../assets/icons/EmailIcon/EmailIcon.js";
+import KeyIcon from "../../assets/icons/KeyIcon/KeyIcon.js";
+import styles from "./LoginForm.module.scss";
 
 function LoginForm() {
   const navigate = useNavigate();
@@ -7,25 +9,34 @@ function LoginForm() {
   const handleBack = () => navigate("/");
 
   return (
-    <div className="auth-container">
-      <div className="form-box">
-        <h2>Entrar</h2>
+    <div className={styles.authContainer}>
+      <div className={styles.formBox}>
+        <h2>
+          <strong>Entrar</strong>
+        </h2>
 
-        <div className="input-group">
-          <span className="icon">✉️</span>
+        <div className={styles.inputGroup}>
+          <span className={styles.icon}>
+            <EmailIcon />
+          </span>
           <input type="email" placeholder="Email" />
         </div>
 
-        <div className="input-group">
-          <span className="icon">🔑</span>
+        <div className={styles.inputGroup}>
+          <span className={styles.icon}>
+            <KeyIcon />
+          </span>
           <input type="password" placeholder="Senha" />
         </div>
 
-        <button className="primary-btn">Entrar</button>
-        <button className="link-btn">Recuperar Senha</button>
-        <button className="link-btn" onClick={handleBack}>
+        <button className={styles.primaryBtn}>Entrar</button>
+        <br></br>
+        <button className={styles.linkBtn}>Recuperar Senha</button>
+        <br></br>
+        <button className={styles.linkBtn} onClick={handleBack}>
           Voltar
         </button>
+        <br></br>
       </div>
     </div>
   );

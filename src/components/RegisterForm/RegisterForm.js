@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import "./RegisterForm.css";
+import NameIcon from "../../assets/icons/NameIcon/NameIcon.js";
+import EmailIcon from "../../assets/icons/EmailIcon/EmailIcon.js";
+import KeyIcon from "../../assets/icons/KeyIcon/KeyIcon.js";
+import styles from "./RegisterForm.module.scss";
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -7,27 +10,36 @@ function RegisterForm() {
   const handleBack = () => navigate("/");
 
   return (
-    <div className="auth-container">
-      <div className="form-box">
-        <h2>Criar conta</h2>
+    <div className={styles.authContainer}>
+      <div className={styles.formBox}>
+        <h2>
+          <strong>Criar conta</strong>
+        </h2>
 
-        <div className="input-group">
-          <span className="icon">👤</span>
+        <div className={styles.inputGroup}>
+          <span className={styles.icon}>
+            <NameIcon />
+          </span>
           <input type="text" placeholder="Nome" />
         </div>
 
-        <div className="input-group">
-          <span className="icon">✉️</span>
+        <div className={styles.inputGroup}>
+          <span className={styles.icon}>
+            <EmailIcon />
+          </span>
           <input type="email" placeholder="Email" />
         </div>
 
-        <div className="input-group">
-          <span className="icon">🔑</span>
+        <div className={styles.inputGroup}>
+          <span className={styles.icon}>
+            <KeyIcon />
+          </span>
           <input type="password" placeholder="Senha" />
         </div>
 
-        <button className="primary-btn">Criar Conta</button>
-        <button className="link-btn" onClick={handleBack}>
+        <button className={styles.primaryBtn}>Criar Conta</button>
+        <br></br>
+        <button className={styles.linkBtn} onClick={handleBack}>
           Voltar
         </button>
       </div>
