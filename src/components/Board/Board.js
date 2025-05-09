@@ -8,6 +8,8 @@ import { Modes } from '../../utils/modes.js';
 import './Board.css';
 
 function Board({
+  canvasRef,
+  isExporting,
   nodes,
   edges,
   setShowMatrix,
@@ -51,6 +53,8 @@ function Board({
         />
       </div>
       <Canvas
+        canvasRef={canvasRef}
+        isExporting={isExporting}
         className="w-100 h-100 d-block position-absolute" 
         nodes={nodes}
         edges={edges}

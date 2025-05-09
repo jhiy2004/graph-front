@@ -23,6 +23,8 @@ class Camera {
 }
 
 function Canvas({
+  canvasRef,
+  isExporting,
   className,
   nodes,
   edges,
@@ -41,7 +43,6 @@ function Canvas({
   addNewNode,
   updateNodePosition
 }) {
-  const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [dragPreviewNode, setDragPreviewNode] = useState(null);
 
@@ -75,7 +76,7 @@ function Canvas({
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     draw(ctx);
-  }, [selectedNodeNumber, nodes, edges, dragPreviewNode, edgeModeNodes, canvasSize]);
+  }, [selectedNodeNumber, nodes, edges, dragPreviewNode, edgeModeNodes, canvasSize, isExporting]);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
@@ -201,12 +202,12 @@ function Canvas({
     const { x, y, color, label, geometry } = node;
 
     ctx.save();
-    if (selectedNodeNumber === node.number) {
+    if (selectedNodeNumber === node.number && !isExporting) {
       ctx.strokeStyle = "#0E95DD";
       ctx.lineWidth = 1;
     }
     
-    if (edgeModeNodes.origin?.number === node.number) {
+    if (edgeModeNodes.origin?.number === node.number && !isExporting) {
       ctx.strokeStyle = "#27AE60";
       ctx.lineWidth = 1;
     }
