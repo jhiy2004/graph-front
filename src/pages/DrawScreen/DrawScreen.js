@@ -11,9 +11,9 @@ import { Algorithms } from '../../utils/algorithms.js';
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
   const [nodes, setNodes] = useState([
-    { id: 1, label: "A", number: 0, x: -100, y: 50, geometry: 'circle', color: "#FFFFFF" },
-    { id: 2, label: "B", number: 1, x: 100, y: -50, geometry: 'square', color: "#FFFFFF" },
-    { id: 3, label: "C", number: 2, x: -300, y: -50, geometry: 'triangle', color: "#FFFFFF" },
+    { id: 1, label: "A", number: 0, x: -20, y: 10, geometry: 'circle', color: "#FFFFFF" },
+    { id: 2, label: "B", number: 1, x: 20, y: -10, geometry: 'square', color: "#FFFFFF" },
+    { id: 3, label: "C", number: 2, x: -60, y: -10, geometry: 'triangle', color: "#FFFFFF" },
   ]);
   const [edges, setEdges] = useState([
     { id: 1, weight: 1, origin: 0, destination: 1 },

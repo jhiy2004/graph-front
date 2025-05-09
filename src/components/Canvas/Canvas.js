@@ -45,14 +45,14 @@ function Canvas({
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [dragPreviewNode, setDragPreviewNode] = useState(null);
 
-  const cameraRef = useRef(new Camera(0, 0, 1, 0, 0));
+  const cameraRef = useRef(new Camera(0, 0, 5));
   const draggingNodeRef = useRef(null);
   const lastPosRef = useRef({ x: 0, y: 0 });
 
   const SHAPE_SIZES = {
-    circle: 50,
-    square: 100,
-    triangle: 100
+    circle: 10,
+    square: 20,
+    triangle: 20
   };
 
   useEffect(() => {
@@ -92,7 +92,7 @@ function Canvas({
 
   function drawCenterCross(ctx) {
     ctx.save();
-    const crossSize = 25;
+    const crossSize = 5;
 
     ctx.strokeStyle = "#ff0000";
     ctx.lineWidth = 1 / cameraRef.current.z;
@@ -108,7 +108,7 @@ function Canvas({
 
   function drawGrid(ctx) {
     const camera = cameraRef.current;
-    const baseGridSize = 50;
+    const baseGridSize = 10;
     const zoom = camera.z;
 
     const left = camera.x - canvasSize.width / 2 / zoom;
@@ -203,12 +203,12 @@ function Canvas({
     ctx.save();
     if (selectedNodeNumber === node.number) {
       ctx.strokeStyle = "#0E95DD";
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 1;
     }
     
     if (edgeModeNodes.origin?.number === node.number) {
       ctx.strokeStyle = "#27AE60";
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 1;
     }
 
     // Draw the shape
@@ -254,11 +254,13 @@ function Canvas({
     ctx.restore();
 
     ctx.save();
+
     ctx.translate(width / 2, height / 2);
     ctx.scale(1, -1);
     ctx.scale(cam.z, cam.z);
     ctx.translate(-cam.x, -cam.y);
-    ctx.font = "24px serif";
+    ctx.font = "6px serif";
+    ctx.lineWidth = 0.2;
 
     drawGrid(ctx);
     drawCenterCross(ctx);
