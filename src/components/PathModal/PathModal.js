@@ -34,7 +34,7 @@ function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges }) {
                 <Modal.Title>{getAlgorithmsTitle(activeAlgorithm)}</Modal.Title>
             </Modal.Header>
 
-            <Modal.Body className="p-0">
+            <Modal.Body className="p-0 overflow-hidden">
                     <PathCanvas
                         nodes={nodes}
                         edges={edges}

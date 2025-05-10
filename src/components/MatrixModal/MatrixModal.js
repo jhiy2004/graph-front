@@ -19,7 +19,7 @@ function MatrixModal({showMatrix, setShowMatrix}){
             <Modal.Header closeButton>
                 <Modal.Title>Visualização matrix de adjacência</Modal.Title>
             </Modal.Header>
-            <Modal.Body className="overflow-x-auto">
+            <Modal.Body className="d-block overflow-x-auto">
                 <Matrix />
             </Modal.Body>
         </Modal>
