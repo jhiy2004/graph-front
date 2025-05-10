@@ -70,8 +70,6 @@ function Canvas({
   }, [zoomAction]);
 
   function draw(ctx) {
-    console.log(nodes);
-    console.log(edges);
     const { width, height } = canvasSize;
     const cam = cameraRef.current;
 
