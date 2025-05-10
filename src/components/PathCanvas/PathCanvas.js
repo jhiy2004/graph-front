@@ -7,6 +7,7 @@ function PathCanvas({
   nodes,
   edges,
   highlighted,
+  cost
 }) {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -64,6 +65,14 @@ function PathCanvas({
       drawGraphNode(ctx, node, false, false, false, highlighted);
     }
 
+    ctx.restore();
+
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+    ctx.font = "bold 24px serif";
+    ctx.fillStyle = "#000";
+    ctx.textBaseline = "hanging";
+    ctx.fillText(`Custo: ${cost}`, 10, 10); // Absolute screen coordinates
     ctx.restore();
   }
 

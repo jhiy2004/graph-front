@@ -18,7 +18,9 @@ function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges }) {
         return algorithmsTitle[algorithm] || "";
     };
 
-    const highlighted = [0, 1]; // placeholder
+    // placeholder
+    const highlighted = [0, 1];
+    const cost = 2;
 
     return (
         <Modal
@@ -37,6 +39,7 @@ function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges }) {
                         nodes={nodes}
                         edges={edges}
                         highlighted={highlighted}
+                        cost={cost}
                     />
             </Modal.Body>
         </Modal>
