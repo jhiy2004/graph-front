@@ -40,7 +40,7 @@ function Board({
   useEffect(() => {
     const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
     setLastNodeNumber(maxNumber);
-  }, []);
+  }, [nodes]);
 
   return (
     <section className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start" ref={sectionRef}>

@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import './GraphHeader.css';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-function GraphHeader({exportPNG, exportDOT}){
+function GraphHeader({exportPNG, exportDOT, save}){
   return (
     <header className="graph-header">
       <div className="header-text">
@@ -22,7 +22,7 @@ function GraphHeader({exportPNG, exportDOT}){
           </Dropdown.Menu>
 
         </Dropdown>
-        <Button variant="outline-lb" className="fw-bold">Salvar</Button>
+        <Button variant="outline-lb" className="fw-bold" onClick={save}>Salvar</Button>
       </div>
     </header>
   );

@@ -76,6 +76,35 @@ function DrawScreen() {
     );
   }
 
+  function save(){
+    if(!logged) return;
+
+    const apiUrl = process.env.REACT_APP_API_URL;
+    const token = 'Bearer token';
+    const graph_id = 1;
+
+    fetch(`${apiUrl}/graphs/update/${graph_id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({
+        vertices: nodes,
+        edges: edges
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.message) return;
+      setNodes(data.vertices);
+      setEdges(data.edges);
+    })
+    .catch(() => {
+      alert("ERROR");
+    })
+  }
+
   function exportPNG() {
     if (!canvasRef || !canvasRef.current) return;
 
@@ -116,6 +145,7 @@ function DrawScreen() {
       <GraphHeader
         exportPNG={exportPNG}
         exportDOT={exportDOT}
+        save={save}
       />
       <Board
         canvasRef={canvasRef}
