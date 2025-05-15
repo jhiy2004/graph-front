@@ -39,8 +39,14 @@ export function strokeTriangleCenter(ctx, x, y, color, side) {
   ctx.stroke();
 }
 
-export function drawGraphNode(ctx, node, isSelected, isEdgeOrigin, isExporting) {
-  const { x, y, color, label, geometry } = node;
+export function drawGraphNode(ctx, node, isSelected, isEdgeOrigin, isExporting, highlighted=[]) {
+  const { x, y, number, label, geometry } = node;
+  let color;
+  if(highlighted.length === 0){
+    color = node.color;
+  }else{
+    color = (highlighted.some((elem) => elem === number)) ? '#0E95DD' : '#FFFFFF';
+  }
 
   ctx.save();
   if (isSelected && !isExporting) {
