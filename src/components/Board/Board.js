@@ -8,6 +8,8 @@ import { Modes } from '../../utils/modes.js';
 import './Board.css';
 
 function Board({
+  canvasRef,
+  isExporting,
   nodes,
   edges,
   setShowMatrix,
@@ -38,7 +40,7 @@ function Board({
   useEffect(() => {
     const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
     setLastNodeNumber(maxNumber);
-  }, []);
+  }, [nodes]);
 
   return (
     <section className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start" ref={sectionRef}>
@@ -51,6 +53,8 @@ function Board({
         />
       </div>
       <Canvas
+        canvasRef={canvasRef}
+        isExporting={isExporting}
         className="w-100 h-100 d-block position-absolute" 
         nodes={nodes}
         edges={edges}

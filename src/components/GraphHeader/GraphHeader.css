@@ -6,21 +6,19 @@
   padding: 10px;
 }
 
-.btn-outline-lb{
-  color: #0E95DD !important;
-  border: 1px solid #0E95DD !important;
-  border-radius: 10px !important;
+.btn-outline-lb {
+  color: #0E95DD;
+  border: 1px solid #0E95DD;
+  border-radius: 10px;
+  background-color: transparent;
 }
 
 .btn-outline-lb:hover,
 .btn-outline-lb:focus,
 .btn-outline-lb:active {
-  background-color: #0E95DD !important;
-  color: white !important;
-  border-color: #0E95DD !important;
-}
-
-.header-text{
+  background-color: #0E95DD;
+  color: white;
+  border-color: #0E95DD;
 }
 
 .header-buttons {

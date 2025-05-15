@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 
 import Board from '../../components/Board/Board.js'
 import GraphHeader from '../../components/GraphHeader/GraphHeader.js';
@@ -10,10 +10,14 @@ import { Algorithms } from '../../utils/algorithms.js';
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
+
+  const canvasRef = useRef(null);
+  const [isExporting, setIsExporting] = useState(false);
+
   const [nodes, setNodes] = useState([
-    { id: 1, label: "A", number: 0, x: -100, y: 50, geometry: 'circle', color: "#FFFFFF" },
-    { id: 2, label: "B", number: 1, x: 100, y: -50, geometry: 'square', color: "#FFFFFF" },
-    { id: 3, label: "C", number: 2, x: -300, y: -50, geometry: 'triangle', color: "#FFFFFF" },
+    { id: 1, label: "A", number: 0, x: -20, y: 10, geometry: 'circle', color: "#FFFFFF" },
+    { id: 2, label: "B", number: 1, x: 20, y: -10, geometry: 'square', color: "#FFFFFF" },
+    { id: 3, label: "C", number: 2, x: -60, y: -10, geometry: 'triangle', color: "#FFFFFF" },
   ]);
   const [edges, setEdges] = useState([
     { id: 1, weight: 1, origin: 0, destination: 1 },
@@ -72,13 +76,80 @@ function DrawScreen() {
     );
   }
 
-  return(
+  function save(){
+    if(!logged) return;
+
+    const apiUrl = process.env.REACT_APP_API_URL;
+    const token = 'Bearer token';
+    const graph_id = 1;
+
+    fetch(`${apiUrl}/graphs/update/${graph_id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({
+        vertices: nodes,
+        edges: edges
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.message) return;
+      setNodes(data.vertices);
+      setEdges(data.edges);
+    })
+    .catch(() => {
+      alert("ERROR");
+    })
+  }
+
+  function exportPNG() {
+    if (!canvasRef || !canvasRef.current) return;
+
+    setIsExporting(true);
+
+    const originalCanvas = canvasRef.current;
+    const tempCanvas = document.createElement("canvas");
+    const ctx = tempCanvas.getContext("2d");
+
+    tempCanvas.width = originalCanvas.width;
+    tempCanvas.height = originalCanvas.height;
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    requestAnimationFrame(() => {
+      ctx.drawImage(originalCanvas, 0, 0);
+
+      const image = tempCanvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = "graph.png";
+      link.click();
+
+      setIsExporting(false);
+    });
+  }
+
+  function exportDOT() {
+    alert("clicked on DOT")
+  }
+
+  return (
     <>
-      <NavbarGraph 
-        logged={logged} 
+      <NavbarGraph
+        logged={logged}
       />
-      <GraphHeader/>
+      <GraphHeader
+        exportPNG={exportPNG}
+        exportDOT={exportDOT}
+        save={save}
+      />
       <Board
+        canvasRef={canvasRef}
+        isExporting={isExporting}
         nodes={nodes}
         edges={edges}
         setShowMatrix={setShowMatrix}
@@ -93,7 +164,7 @@ function DrawScreen() {
         showMatrix={showMatrix}
         setShowMatrix={setShowMatrix}
       />
-          
+
       <PathModal
         activeAlgorithm={activeAlgorithm}
         setActiveAlgorithm={setActiveAlgorithm}
