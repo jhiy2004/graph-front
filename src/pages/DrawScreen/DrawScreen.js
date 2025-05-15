@@ -1,16 +1,15 @@
-import React, {useState, useRef} from 'react'
+import React, { useState, useRef } from 'react';
 
-import Board from '../../components/Board/Board.js'
+import Board from '../../components/Board/Board.js';
 import GraphHeader from '../../components/GraphHeader/GraphHeader.js';
 import NavbarGraph from '../../components/NavbarGraph/NavbarGraph.js';
-import MatrixModal from "../../components/MatrixModal/MatrixModal.js";
+import MatrixModal from '../../components/MatrixModal/MatrixModal.js';
 import PathModal from '../../components/PathModal/PathModal.js';
 
 import { Algorithms } from '../../utils/algorithms.js';
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
-
   const canvasRef = useRef(null);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -26,8 +25,9 @@ function DrawScreen() {
 
   const [showMatrix, setShowMatrix] = useState(false);
   const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
+  const [pathResult, setPathResult] = useState(null);
 
-  function addNewNode(newNode){
+  function addNewNode(newNode) {
     setNodes(prev => [...prev, newNode]);
   }
 
@@ -36,20 +36,20 @@ function DrawScreen() {
       (newEdge.origin === edge.origin && newEdge.destination === edge.destination) ||
       (newEdge.origin === edge.destination && newEdge.destination === edge.origin)
     );
-  
+
     if (!exists) {
       setEdges([...edges, newEdge]);
     }
   }
 
-  function updateNodePosition(nodeNumber, x, y){
-      setNodes(prev =>
-        prev.map(node =>
-          node.number === nodeNumber
-            ? { ...node, x: x, y: y }
-            : node
-        )
-      );
+  function updateNodePosition(nodeNumber, x, y) {
+    setNodes(prev =>
+      prev.map(node =>
+        node.number === nodeNumber
+          ? { ...node, x: x, y: y }
+          : node
+      )
+    );
   }
 
   function updateNodeField(field, value, nodeNumber) {
@@ -60,15 +60,15 @@ function DrawScreen() {
             if (value === '' || value === '-' || value === '+') {
               return { ...node, [field]: value };
             }
-  
+
             const parsed = Number(value);
             if (!Number.isNaN(parsed) && Number.isInteger(parsed)) {
               return { ...node, [field]: parsed };
             }
-  
+
             return node;
           }
-  
+
           return { ...node, [field]: value };
         }
         return node;
@@ -76,8 +76,8 @@ function DrawScreen() {
     );
   }
 
-  function save(){
-    if(!logged) return;
+  function save() {
+    if (!logged) return;
 
     const apiUrl = process.env.REACT_APP_API_URL;
     const token = 'Bearer token';
@@ -94,15 +94,15 @@ function DrawScreen() {
         edges: edges
       })
     })
-    .then(res => res.json())
-    .then(data => {
-      if(data.message) return;
-      setNodes(data.vertices);
-      setEdges(data.edges);
-    })
-    .catch(() => {
-      alert("ERROR");
-    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message) return;
+        setNodes(data.vertices);
+        setEdges(data.edges);
+      })
+      .catch(() => {
+        alert("ERROR");
+      });
   }
 
   function exportPNG() {
@@ -134,45 +134,72 @@ function DrawScreen() {
   }
 
   function exportDOT() {
-    alert("clicked on DOT")
+    alert("clicked on DOT");
+  }
+
+  async function handleRunAlgorithm(algorithm) {
+    setActiveAlgorithm(algorithm);
+
+    const apiUrl = process.env.REACT_APP_API_URL;
+    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
+
+    const graph = {
+      edges: apiEdges,
+      n: nodes.length,
+      source: 0,
+      destination: 2
+    };
+
+    try {
+      const res = await fetch(`${apiUrl}/graphs/${algorithm}/matrix`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(graph)
+      });
+      const data = await res.json();
+      setPathResult(data);
+      console.log(data);
+    } catch (e) {
+      alert("Erro ao buscar caminho.");
+      setPathResult(null);
+      setActiveAlgorithm(Algorithms.NONE);
+    }
   }
 
   return (
     <>
-      <NavbarGraph
-        logged={logged}
-      />
-      <GraphHeader
-        exportPNG={exportPNG}
-        exportDOT={exportDOT}
-        save={save}
-      />
+      <NavbarGraph logged={logged} />
+      <GraphHeader exportPNG={exportPNG} exportDOT={exportDOT} save={save} />
       <Board
         canvasRef={canvasRef}
         isExporting={isExporting}
         nodes={nodes}
         edges={edges}
         setShowMatrix={setShowMatrix}
-        setActiveAlgorithm={setActiveAlgorithm}
+        setActiveAlgorithm={handleRunAlgorithm}
         addNewEdge={addNewEdge}
         addNewNode={addNewNode}
         updateNodePosition={updateNodePosition}
         updateNodeField={updateNodeField}
       />
 
-      <MatrixModal
-        showMatrix={showMatrix}
-        setShowMatrix={setShowMatrix}
-      />
+      <MatrixModal showMatrix={showMatrix} setShowMatrix={setShowMatrix} />
 
-      <PathModal
-        activeAlgorithm={activeAlgorithm}
-        setActiveAlgorithm={setActiveAlgorithm}
-        nodes={nodes}
-        edges={edges}
-      />
+      {activeAlgorithm !== Algorithms.NONE && pathResult && (
+        <PathModal
+          activeAlgorithm={activeAlgorithm}
+          setActiveAlgorithm={(alg) => {
+            setActiveAlgorithm(alg);
+            setPathResult(null);
+          }}
+          nodes={nodes}
+          edges={edges}
+          path={pathResult.path}
+          cost={pathResult.cost}
+        />
+      )}
     </>
-  )
+  );
 }
 
 export default DrawScreen;
