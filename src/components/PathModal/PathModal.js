@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import PathCanvas from '../PathCanvas/PathCanvas.js';
 import { Algorithms } from '../../utils/algorithms.js';
 
 import '../../styles/largeModal.css';
 
-function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges }) {
+function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges, path, cost }) {
     const isVisible = activeAlgorithm !== Algorithms.NONE;
 
     const algorithmsTitle = {
@@ -17,10 +17,6 @@ function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges }) {
     const getAlgorithmsTitle = (algorithm) => {
         return algorithmsTitle[algorithm] || "";
     };
-
-    // placeholder
-    const highlighted = [0, 1];
-    const cost = 2;
 
     return (
         <Modal
@@ -35,12 +31,12 @@ function PathModal({ activeAlgorithm, setActiveAlgorithm, nodes, edges }) {
             </Modal.Header>
 
             <Modal.Body className="p-0 overflow-hidden">
-                    <PathCanvas
-                        nodes={nodes}
-                        edges={edges}
-                        highlighted={highlighted}
-                        cost={cost}
-                    />
+                <PathCanvas
+                    nodes={nodes}
+                    edges={edges}
+                    highlighted={path || []}
+                    cost={cost || null}
+                />
             </Modal.Body>
         </Modal>
     );
