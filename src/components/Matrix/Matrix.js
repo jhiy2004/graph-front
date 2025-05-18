@@ -2,9 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import MatrixBorder from '../MatrixBorder/MatrixBorder.js';
 import MatrixRow from '../MatrixRow/MatrixRow.js';
 
-function Matrix() {
-    const size = 64;
-    const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+function Matrix({matrix}) {
     const tableRef = useRef(null);
     const [tableSize, setTableSize] = useState(0);
 

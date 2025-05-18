@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Matrix from '../Matrix/Matrix.js';
 import "../../styles/largeModal.css"
 
-function MatrixModal({showMatrix, setShowMatrix}){
+function MatrixModal({showMatrix, setShowMatrix, matrix}){
     const handleClose = () => {setShowMatrix(false)};
 
     return (
@@ -20,7 +20,7 @@ function MatrixModal({showMatrix, setShowMatrix}){
                 <Modal.Title>Visualização matrix de adjacência</Modal.Title>
             </Modal.Header>
             <Modal.Body className="d-block overflow-x-auto">
-                <Matrix />
+                <Matrix matrix={matrix}/>
             </Modal.Body>
         </Modal>
     );
