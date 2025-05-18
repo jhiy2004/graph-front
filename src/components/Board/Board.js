@@ -12,12 +12,13 @@ function Board({
   isExporting,
   nodes,
   edges,
-  setShowMatrix,
   setActiveAlgorithm,
   addNewEdge,
   addNewNode,
   updateNodePosition,
-  updateNodeField
+  updateNodeField,
+  getAdjacencyMatrix,
+  getAdjacencyList
 }) {
   const sectionRef = useRef(null);
   const [zoomAction, setZoomAction] = useState(null);
@@ -84,8 +85,9 @@ function Board({
       )}
       <div className="z-1 flex-grow-1 mx-1 mb-1 align-self-end w-100">
         <AlgorithmsBar
-          setShowMatrix={setShowMatrix}
           setActiveAlgorithm={setActiveAlgorithm}
+          getAdjacencyMatrix={getAdjacencyMatrix}
+          getAdjacencyList={getAdjacencyList}
         />
       </div>
     </section>

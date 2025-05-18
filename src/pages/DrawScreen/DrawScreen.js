@@ -26,6 +26,7 @@ function DrawScreen() {
   const [showMatrix, setShowMatrix] = useState(false);
   const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
   const [pathResult, setPathResult] = useState(null);
+  const [matrix, setMatrix] = useState(null);
 
   function addNewNode(newNode) {
     setNodes(prev => [...prev, newNode]);
@@ -158,11 +159,58 @@ function DrawScreen() {
       });
       const data = await res.json();
       setPathResult(data);
-      console.log(data);
     } catch (e) {
       alert("Erro ao buscar caminho.");
       setPathResult(null);
       setActiveAlgorithm(Algorithms.NONE);
+    }
+  }
+
+  async function getAdjacencyMatrix(){
+    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    const graph = {
+      edges: apiEdges,
+      n: nodes.length
+    }
+
+    try {
+      const res = await fetch(`${apiUrl}/graphs/matrix`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(graph)
+      })
+      const data = await res.json();
+      setMatrix(data.graph);
+      console.log(data);
+    } catch (e) {
+      alert("Erro ao buscar matriz de adjacência.");
+      setMatrix([[]]);
+    }
+
+    setShowMatrix(true)
+  }
+
+  async function getAdjacencyList(){
+    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    const graph = {
+      edges: apiEdges,
+      n: nodes.length
+    }
+
+    try {
+      const res = await fetch(`${apiUrl}/graphs/list`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(graph)
+      })
+      const data = await res.json();
+      console.log(data);
+    } catch (e) {
+      alert("Erro ao buscar lista de adjacência.");
     }
   }
 
@@ -175,15 +223,20 @@ function DrawScreen() {
         isExporting={isExporting}
         nodes={nodes}
         edges={edges}
-        setShowMatrix={setShowMatrix}
         setActiveAlgorithm={handleRunAlgorithm}
         addNewEdge={addNewEdge}
         addNewNode={addNewNode}
         updateNodePosition={updateNodePosition}
         updateNodeField={updateNodeField}
+        getAdjacencyMatrix={getAdjacencyMatrix}
+        getAdjacencyList={getAdjacencyList}
       />
 
-      <MatrixModal showMatrix={showMatrix} setShowMatrix={setShowMatrix} />
+      <MatrixModal
+        showMatrix={showMatrix}
+        setShowMatrix={setShowMatrix}
+        matrix={matrix}
+      />
 
       {activeAlgorithm !== Algorithms.NONE && pathResult && (
         <PathModal
