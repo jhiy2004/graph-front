@@ -1,9 +1,9 @@
 import React from "react";
-import "./UserGraphsRow.css";
+import styles from "./UserGraphsRow.module.scss";
 
 function UserGraphsRow({ nome, autor, criacao, modificacao, onClick }) {
   return (
-    <tr className="graph-row" onClick={onClick}>
+    <tr className={styles.graphRow} onClick={onClick}>
       <td>{nome}</td>
       <td>{autor}</td>
       <td>{criacao}</td>
