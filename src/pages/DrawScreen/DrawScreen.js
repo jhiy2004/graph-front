@@ -134,8 +134,41 @@ function DrawScreen() {
     });
   }
 
-  function exportDOT() {
-    alert("clicked on DOT");
+  async function exportDOT() {
+    const apiUrl = process.env.REACT_APP_API_URL;
+    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
+
+    const graph = {
+      edges: apiEdges,
+      n: nodes.length
+    };
+
+    try {
+      const res = await fetch(`${apiUrl}/graphs/dot/matrix`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(graph)
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      if (data.message) return;
+
+      const blob = new Blob([data.dot], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "graph.dot";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+    } catch (e) {
+      console.error("Error generating DOT file:", e);
+      alert("Erro ao gerar arquivo DOT.");
+    }
   }
 
   async function handleRunAlgorithm(algorithm) {
