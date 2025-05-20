@@ -3,14 +3,14 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-function PathInputModal({ nodes, showInput, setShowInput, handleInputSubmit }) {
+function PathInputModal({ nodes, showPathInputModal, setShowPathInputModal, handleInputSubmit }) {
     const [localSource, setLocalSource] = useState(nodes[0]?.number || 0);
     const [localDestination, setLocalDestination] = useState(nodes[0]?.number || 0);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         handleInputSubmit(Number(localSource), Number(localDestination));
-        setShowInput(false);
+        setShowPathInputModal(false);
     };
 
     const nodesOptions = nodes.map(node => (
@@ -20,7 +20,7 @@ function PathInputModal({ nodes, showInput, setShowInput, handleInputSubmit }) {
     ));
 
     return (
-        <Modal show={showInput} onHide={() => setShowInput(false)}>
+        <Modal show={showPathInputModal} onHide={() => setShowPathInputModal(false)}>
             <Modal.Header closeButton>
                 <Modal.Title>Encontrar caminho</Modal.Title>
             </Modal.Header>
