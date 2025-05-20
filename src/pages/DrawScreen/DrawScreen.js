@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import Board from '../../components/Board/Board.js';
 import GraphHeader from '../../components/GraphHeader/GraphHeader.js';
 import NavbarGraph from '../../components/NavbarGraph/NavbarGraph.js';
 import MatrixModal from '../../components/MatrixModal/MatrixModal.js';
 import PathModal from '../../components/PathModal/PathModal.js';
+import PathInputModal from '../../components/PathInputModal/PathInputModal.js';
 
 import { Algorithms } from '../../utils/algorithms.js';
 
@@ -23,13 +24,23 @@ function DrawScreen() {
     { id: 2, weight: 1, origin: 2, destination: 0 }
   ]);
 
+  const [lastNodeNumber, setLastNodeNumber] = useState(0);
+
   const [showMatrix, setShowMatrix] = useState(false);
+  const [showInput, setShowInput] = useState(false);
+
   const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
   const [pathResult, setPathResult] = useState(null);
   const [matrix, setMatrix] = useState(null);
 
+  function updateLastNodeNumber(){
+    const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
+    setLastNodeNumber(maxNumber);
+  }
+
   function addNewNode(newNode) {
     setNodes(prev => [...prev, newNode]);
+    updateLastNodeNumber();
   }
 
   function addNewEdge(newEdge) {
@@ -47,7 +58,7 @@ function DrawScreen() {
     setNodes(prev =>
       prev.map(node =>
         node.number === nodeNumber
-          ? { ...node, x: x, y: y }
+          ? { ...node, x, y }
           : node
       )
     );
@@ -171,21 +182,19 @@ function DrawScreen() {
     }
   }
 
-  async function handleRunAlgorithm(algorithm) {
-    setActiveAlgorithm(algorithm);
-
+  async function handleRunAlgorithm(source, destination) {
     const apiUrl = process.env.REACT_APP_API_URL;
     const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
 
     const graph = {
       edges: apiEdges,
       n: nodes.length,
-      source: 0,
-      destination: 2
+      source: source,
+      destination: destination
     };
 
     try {
-      const res = await fetch(`${apiUrl}/graphs/${algorithm}/matrix`, {
+      const res = await fetch(`${apiUrl}/graphs/${activeAlgorithm}/matrix`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(graph)
@@ -199,53 +208,66 @@ function DrawScreen() {
     }
   }
 
-  async function getAdjacencyMatrix(){
+  async function getAdjacencyMatrix() {
     const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
     const apiUrl = process.env.REACT_APP_API_URL;
 
     const graph = {
       edges: apiEdges,
       n: nodes.length
-    }
+    };
 
     try {
       const res = await fetch(`${apiUrl}/graphs/matrix`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(graph)
-      })
+      });
       const data = await res.json();
       setMatrix(data.graph);
-      console.log(data);
     } catch (e) {
       alert("Erro ao buscar matriz de adjacência.");
       setMatrix([[]]);
     }
 
-    setShowMatrix(true)
+    setShowMatrix(true);
   }
 
-  async function getAdjacencyList(){
+  async function getAdjacencyList() {
     const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
     const apiUrl = process.env.REACT_APP_API_URL;
 
     const graph = {
       edges: apiEdges,
       n: nodes.length
-    }
+    };
 
     try {
       const res = await fetch(`${apiUrl}/graphs/list`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(graph)
-      })
+      });
       const data = await res.json();
       console.log(data);
     } catch (e) {
       alert("Erro ao buscar lista de adjacência.");
     }
   }
+
+  function handleInputAlgorithm(algorithm) {
+    setActiveAlgorithm(algorithm);
+    setShowInput(true); // show modal only
+  }
+
+  function handleInputSubmit(src, dst) {
+    setShowInput(false);
+    handleRunAlgorithm(parseInt(src), parseInt(dst));
+  }
+
+  useEffect(() => {
+    updateLastNodeNumber()
+  }, [])
 
   return (
     <>
@@ -256,19 +278,28 @@ function DrawScreen() {
         isExporting={isExporting}
         nodes={nodes}
         edges={edges}
-        setActiveAlgorithm={handleRunAlgorithm}
+        handleInputAlgorithm={handleInputAlgorithm}
         addNewEdge={addNewEdge}
         addNewNode={addNewNode}
         updateNodePosition={updateNodePosition}
         updateNodeField={updateNodeField}
         getAdjacencyMatrix={getAdjacencyMatrix}
         getAdjacencyList={getAdjacencyList}
+        lastNodeNumber={lastNodeNumber}
+        setLastNodeNumber={setLastNodeNumber}
       />
 
       <MatrixModal
         showMatrix={showMatrix}
         setShowMatrix={setShowMatrix}
         matrix={matrix}
+      />
+
+      <PathInputModal
+        nodes={nodes}
+        showInput={showInput}
+        setShowInput={setShowInput}
+        handleInputSubmit={handleInputSubmit}
       />
 
       {activeAlgorithm !== Algorithms.NONE && pathResult && (
