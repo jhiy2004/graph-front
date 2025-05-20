@@ -8,6 +8,7 @@ import PathModal from '../../components/PathModal/PathModal.js';
 import PathInputModal from '../../components/PathInputModal/PathInputModal.js';
 
 import { Algorithms } from '../../utils/algorithms.js';
+import { useGraphAPI } from './useGraphAPI.js';
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
@@ -27,20 +28,21 @@ function DrawScreen() {
   const [lastNodeNumber, setLastNodeNumber] = useState(0);
 
   const [showMatrix, setShowMatrix] = useState(false);
-  const [showInput, setShowInput] = useState(false);
+  const [showPathInputModal, setShowPathInputModal] = useState(false);
 
   const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
   const [pathResult, setPathResult] = useState(null);
   const [matrix, setMatrix] = useState(null);
 
-  function updateLastNodeNumber(){
-    const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
-    setLastNodeNumber(maxNumber);
-  }
+  const { fetchAdjacencyMatrix, fetchAdjacencyList, fetchPath, fetchDOT, updateGraph } = useGraphAPI(process.env.REACT_APP_API_URL);
 
   function addNewNode(newNode) {
-    setNodes(prev => [...prev, newNode]);
-    updateLastNodeNumber();
+    setNodes(prev => {
+      const updated = [...prev, newNode];
+      const maxNumber = updated.reduce((max, node) => Math.max(max, node.number), 0);
+      setLastNodeNumber(maxNumber);
+      return updated;
+    });
   }
 
   function addNewEdge(newEdge) {
@@ -88,37 +90,9 @@ function DrawScreen() {
     );
   }
 
-  function save() {
-    if (!logged) return;
-
-    const apiUrl = process.env.REACT_APP_API_URL;
-    const token = 'Bearer token';
-    const graph_id = 1;
-
-    fetch(`${apiUrl}/graphs/update/${graph_id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token
-      },
-      body: JSON.stringify({
-        vertices: nodes,
-        edges: edges
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message) return;
-        setNodes(data.vertices);
-        setEdges(data.edges);
-      })
-      .catch(() => {
-        alert("ERROR");
-      });
-  }
-
   function exportPNG() {
     if (!canvasRef || !canvasRef.current) return;
+    if (isExporting) return;
 
     setIsExporting(true);
 
@@ -146,24 +120,8 @@ function DrawScreen() {
   }
 
   async function exportDOT() {
-    const apiUrl = process.env.REACT_APP_API_URL;
-    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
-
-    const graph = {
-      edges: apiEdges,
-      n: nodes.length
-    };
-
     try {
-      const res = await fetch(`${apiUrl}/graphs/dot/matrix`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graph)
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const data = await res.json();
+      const data = await fetchDOT(edges, nodes.length);
       if (data.message) return;
 
       const blob = new Blob([data.dot], { type: 'text/plain;charset=utf-8' });
@@ -182,24 +140,26 @@ function DrawScreen() {
     }
   }
 
+  async function handleSave() {
+    if (!logged) return;
+
+    const token = 'Bearer token';
+    const graph_id = 1;
+
+    try{
+      const data = await updateGraph(nodes, edges, token, graph_id);
+      if (data.message) return;
+
+      setNodes(data.vertices);
+      setEdges(data.edges);
+    } catch (e) {
+      alert("Erro ao salvar o grafo");
+    }
+  }
+
   async function handleRunAlgorithm(source, destination) {
-    const apiUrl = process.env.REACT_APP_API_URL;
-    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
-
-    const graph = {
-      edges: apiEdges,
-      n: nodes.length,
-      source: source,
-      destination: destination
-    };
-
     try {
-      const res = await fetch(`${apiUrl}/graphs/${activeAlgorithm}/matrix`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graph)
-      });
-      const data = await res.json();
+      const data = await fetchPath(edges, nodes.length, source, destination, activeAlgorithm, 'matrix');
       setPathResult(data);
     } catch (e) {
       alert("Erro ao buscar caminho.");
@@ -209,21 +169,8 @@ function DrawScreen() {
   }
 
   async function getAdjacencyMatrix() {
-    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
-    const apiUrl = process.env.REACT_APP_API_URL;
-
-    const graph = {
-      edges: apiEdges,
-      n: nodes.length
-    };
-
     try {
-      const res = await fetch(`${apiUrl}/graphs/matrix`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graph)
-      });
-      const data = await res.json();
+      const data = await fetchAdjacencyMatrix(edges, nodes.length);
       setMatrix(data.graph);
     } catch (e) {
       alert("Erro ao buscar matriz de adjacência.");
@@ -234,21 +181,8 @@ function DrawScreen() {
   }
 
   async function getAdjacencyList() {
-    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
-    const apiUrl = process.env.REACT_APP_API_URL;
-
-    const graph = {
-      edges: apiEdges,
-      n: nodes.length
-    };
-
     try {
-      const res = await fetch(`${apiUrl}/graphs/list`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graph)
-      });
-      const data = await res.json();
+      const data = await fetchAdjacencyList(edges, nodes.length);
       console.log(data);
     } catch (e) {
       alert("Erro ao buscar lista de adjacência.");
@@ -257,22 +191,33 @@ function DrawScreen() {
 
   function handleInputAlgorithm(algorithm) {
     setActiveAlgorithm(algorithm);
-    setShowInput(true); // show modal only
+    setShowPathInputModal(true); // show modal only
   }
 
   function handleInputSubmit(src, dst) {
-    setShowInput(false);
-    handleRunAlgorithm(parseInt(src), parseInt(dst));
+    const source = parseInt(src);
+    const destination = parseInt(dst);
+    const valid = nodes.some(n => n.number === source) && nodes.some(n => n.number === destination);
+
+    if (!valid || isNaN(source) || isNaN(destination)) {
+      alert("Origem ou destino inválido.");
+      return;
+    }
+
+    setShowPathInputModal(false);
+    handleRunAlgorithm(source, destination);
   }
 
+
   useEffect(() => {
-    updateLastNodeNumber()
+    const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
+    setLastNodeNumber(maxNumber);
   }, [])
 
   return (
     <>
       <NavbarGraph logged={logged} />
-      <GraphHeader exportPNG={exportPNG} exportDOT={exportDOT} save={save} />
+      <GraphHeader exportPNG={exportPNG} exportDOT={exportDOT} handleSave={handleSave} />
       <Board
         canvasRef={canvasRef}
         isExporting={isExporting}
@@ -297,8 +242,8 @@ function DrawScreen() {
 
       <PathInputModal
         nodes={nodes}
-        showInput={showInput}
-        setShowInput={setShowInput}
+        showPathInputModal={showPathInputModal}
+        setShowPathInputModal={setShowPathInputModal}
         handleInputSubmit={handleInputSubmit}
       />
 
