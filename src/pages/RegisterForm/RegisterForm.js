@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import NameIcon from "../../assets/icons/NameIcon/NameIcon.js";
 import EmailIcon from "../../assets/icons/EmailIcon/EmailIcon.js";
 import KeyIcon from "../../assets/icons/KeyIcon/KeyIcon.js";
