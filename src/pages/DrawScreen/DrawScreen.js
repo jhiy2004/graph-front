@@ -1,12 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 
-import Board from '../../components/Board/Board.js';
-import GraphHeader from '../../components/GraphHeader/GraphHeader.js';
-import NavbarGraph from '../../components/NavbarGraph/NavbarGraph.js';
-import MatrixModal from '../../components/MatrixModal/MatrixModal.js';
-import PathModal from '../../components/PathModal/PathModal.js';
+import Board from "../../components/Board/Board.js";
+import GraphHeader from "../../components/GraphHeader/GraphHeader.js";
+import NavbarGraph from "../../components/NavbarGraph/NavbarGraph.js";
+import MatrixModal from "../../components/MatrixModal/MatrixModal.js";
+import AdjListModal from "../../components/AdjListModal/AdjListModal.js";
+import PathModal from "../../components/PathModal/PathModal.js";
 
-import { Algorithms } from '../../utils/algorithms.js';
+import { Algorithms } from "../../utils/algorithms.js";
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
@@ -14,27 +15,55 @@ function DrawScreen() {
   const [isExporting, setIsExporting] = useState(false);
 
   const [nodes, setNodes] = useState([
-    { id: 1, label: "A", number: 0, x: -20, y: 10, geometry: 'circle', color: "#FFFFFF" },
-    { id: 2, label: "B", number: 1, x: 20, y: -10, geometry: 'square', color: "#FFFFFF" },
-    { id: 3, label: "C", number: 2, x: -60, y: -10, geometry: 'triangle', color: "#FFFFFF" },
+    {
+      id: 1,
+      label: "A",
+      number: 0,
+      x: -20,
+      y: 10,
+      geometry: "circle",
+      color: "#FFFFFF",
+    },
+    {
+      id: 2,
+      label: "B",
+      number: 1,
+      x: 20,
+      y: -10,
+      geometry: "square",
+      color: "#FFFFFF",
+    },
+    {
+      id: 3,
+      label: "C",
+      number: 2,
+      x: -60,
+      y: -10,
+      geometry: "triangle",
+      color: "#FFFFFF",
+    },
   ]);
   const [edges, setEdges] = useState([
     { id: 1, weight: 1, origin: 0, destination: 1 },
-    { id: 2, weight: 1, origin: 2, destination: 0 }
+    { id: 2, weight: 1, origin: 2, destination: 0 },
   ]);
 
   const [showMatrix, setShowMatrix] = useState(false);
+  const [showAdjList, setShowAdjList] = useState(false);
   const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
   const [pathResult, setPathResult] = useState(null);
 
   function addNewNode(newNode) {
-    setNodes(prev => [...prev, newNode]);
+    setNodes((prev) => [...prev, newNode]);
   }
 
   function addNewEdge(newEdge) {
-    const exists = edges.some(edge =>
-      (newEdge.origin === edge.origin && newEdge.destination === edge.destination) ||
-      (newEdge.origin === edge.destination && newEdge.destination === edge.origin)
+    const exists = edges.some(
+      (edge) =>
+        (newEdge.origin === edge.origin &&
+          newEdge.destination === edge.destination) ||
+        (newEdge.origin === edge.destination &&
+          newEdge.destination === edge.origin),
     );
 
     if (!exists) {
@@ -43,21 +72,19 @@ function DrawScreen() {
   }
 
   function updateNodePosition(nodeNumber, x, y) {
-    setNodes(prev =>
-      prev.map(node =>
-        node.number === nodeNumber
-          ? { ...node, x: x, y: y }
-          : node
-      )
+    setNodes((prev) =>
+      prev.map((node) =>
+        node.number === nodeNumber ? { ...node, x: x, y: y } : node,
+      ),
     );
   }
 
   function updateNodeField(field, value, nodeNumber) {
-    setNodes(prevNodes =>
-      prevNodes.map(node => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) => {
         if (node.number === nodeNumber) {
-          if (['x', 'y', 'number'].includes(field)) {
-            if (value === '' || value === '-' || value === '+') {
+          if (["x", "y", "number"].includes(field)) {
+            if (value === "" || value === "-" || value === "+") {
               return { ...node, [field]: value };
             }
 
@@ -72,7 +99,7 @@ function DrawScreen() {
           return { ...node, [field]: value };
         }
         return node;
-      })
+      }),
     );
   }
 
@@ -80,22 +107,22 @@ function DrawScreen() {
     if (!logged) return;
 
     const apiUrl = process.env.REACT_APP_API_URL;
-    const token = 'Bearer token';
+    const token = "Bearer token";
     const graph_id = 1;
 
     fetch(`${apiUrl}/graphs/update/${graph_id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token
+        "Content-Type": "application/json",
+        Authorization: token,
       },
       body: JSON.stringify({
         vertices: nodes,
-        edges: edges
-      })
+        edges: edges,
+      }),
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.message) return;
         setNodes(data.vertices);
         setEdges(data.edges);
@@ -141,20 +168,24 @@ function DrawScreen() {
     setActiveAlgorithm(algorithm);
 
     const apiUrl = process.env.REACT_APP_API_URL;
-    const apiEdges = edges.map(edge => [edge.origin, edge.destination, edge.weight]);
+    const apiEdges = edges.map((edge) => [
+      edge.origin,
+      edge.destination,
+      edge.weight,
+    ]);
 
     const graph = {
       edges: apiEdges,
       n: nodes.length,
       source: 0,
-      destination: 2
+      destination: 2,
     };
 
     try {
       const res = await fetch(`${apiUrl}/graphs/${algorithm}/matrix`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graph)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(graph),
       });
       const data = await res.json();
       setPathResult(data);
@@ -164,6 +195,14 @@ function DrawScreen() {
       setPathResult(null);
       setActiveAlgorithm(Algorithms.NONE);
     }
+  }
+
+  function buildAdjacencyList() {
+    const list = Array.from({ length: nodes.length }, () => []);
+    edges.forEach(({ origin, destination, weight }) => {
+      list[origin].push({ vertex: destination, weight });
+    });
+    return list;
   }
 
   return (
@@ -176,6 +215,7 @@ function DrawScreen() {
         nodes={nodes}
         edges={edges}
         setShowMatrix={setShowMatrix}
+        setShowList={setShowAdjList}
         setActiveAlgorithm={handleRunAlgorithm}
         addNewEdge={addNewEdge}
         addNewNode={addNewNode}
@@ -184,6 +224,11 @@ function DrawScreen() {
       />
 
       <MatrixModal showMatrix={showMatrix} setShowMatrix={setShowMatrix} />
+      <AdjListModal
+        showAdjList={showAdjList}
+        setShowAdjList={setShowAdjList}
+        adjacencyList={buildAdjacencyList()}
+      />
 
       {activeAlgorithm !== Algorithms.NONE && pathResult && (
         <PathModal
