@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Canvas from '../Canvas/Canvas.js';
 import Toolbar from '../Toolbar/Toolbar.js';
 import AlgorithmsBar from '../AlgorithmsBar/AlgorithmsBar.js';
@@ -12,12 +12,15 @@ function Board({
   isExporting,
   nodes,
   edges,
-  setShowMatrix,
-  setActiveAlgorithm,
+  handleInputAlgorithm,
   addNewEdge,
   addNewNode,
   updateNodePosition,
-  updateNodeField
+  updateNodeField,
+  getAdjacencyMatrix,
+  getAdjacencyList,
+  lastNodeNumber,
+  setLastNodeNumber
 }) {
   const sectionRef = useRef(null);
   const [zoomAction, setZoomAction] = useState(null);
@@ -27,7 +30,6 @@ function Board({
   const [dragPreviewTemplate, setDragPreviewTemplate] = useState(null);
   const [edgeModeNodes, setEdgeModeNodes] = useState({ origin: null });
 
-  const [lastNodeNumber, setLastNodeNumber] = useState(0);
 
   function handleModeChange(newMode){
     if(activeMode === Modes.EDGE){
@@ -36,11 +38,6 @@ function Board({
 
     setActiveMode(newMode === activeMode ? Modes.NONE : newMode);
   }
-
-  useEffect(() => {
-    const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
-    setLastNodeNumber(maxNumber);
-  }, [nodes]);
 
   return (
     <section className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start" ref={sectionRef}>
@@ -84,8 +81,9 @@ function Board({
       )}
       <div className="z-1 flex-grow-1 mx-1 mb-1 align-self-end w-100">
         <AlgorithmsBar
-          setShowMatrix={setShowMatrix}
-          setActiveAlgorithm={setActiveAlgorithm}
+          handleInputAlgorithm={handleInputAlgorithm}
+          getAdjacencyMatrix={getAdjacencyMatrix}
+          getAdjacencyList={getAdjacencyList}
         />
       </div>
     </section>
