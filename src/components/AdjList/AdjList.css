@@ -11,42 +11,34 @@
 }
 
 .vertex-label {
+  padding: 0.6rem 0.6rem;
+  border: 2px solid black;
+  border-right: 0px;
+  display: inline-block;
+  width: 55px;
+  text-align: center;
+  height: 40px;
   font-weight: bold;
-  margin-right: 0.5rem;
-  min-width: 70px;
 }
 
 .adj-node {
   display: flex;
   align-items: center;
-  margin-right: 0.5rem;
 }
 
 .node-box {
-  border: 2px solid #555;
-  padding: 0.3rem 0.6rem;
-  margin-right: 2px;
+  border: 2px solid black;
+  border-right: 0px;
+  padding: 0.6rem 0.6rem;
   display: inline-block;
-  min-width: 24px;
+  width: 55px;
   text-align: center;
-}
-
-.node-arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 100%;
-  background-color: #e0e0e0;
-  border: 2px solid #555;
-  margin-left: 2px;
-  margin-right: 4px;
+  height: 40px;
   font-weight: bold;
-  font-size: 1.1rem;
-  color: black;
 }
 
 .null-label {
   color: black;
-  margin-left: 0.5rem;
+  font-weight: bold;
+  padding-top: 8px;
 }
