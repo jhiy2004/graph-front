@@ -1,14 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
-import Board from '../../components/Board/Board.js';
-import GraphHeader from '../../components/GraphHeader/GraphHeader.js';
-import NavbarGraph from '../../components/NavbarGraph/NavbarGraph.js';
-import MatrixModal from '../../components/MatrixModal/MatrixModal.js';
-import PathModal from '../../components/PathModal/PathModal.js';
-import PathInputModal from '../../components/PathInputModal/PathInputModal.js';
+import Board from "../../components/Board/Board.js";
+import GraphHeader from "../../components/GraphHeader/GraphHeader.js";
+import NavbarGraph from "../../components/NavbarGraph/NavbarGraph.js";
+import MatrixModal from "../../components/MatrixModal/MatrixModal.js";
+import AdjListModal from "../../components/AdjListModal/AdjListModal.js";
+import PathModal from "../../components/PathModal/PathModal.js";
+import PathInputModal from "../../components/PathInputModal/PathInputModal.js";
 
-import { Algorithms } from '../../utils/algorithms.js';
-import { useGraphAPI } from './useGraphAPI.js';
+import { Algorithms } from "../../utils/algorithms.js";
+import { useGraphAPI } from "./useGraphAPI.js";
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
@@ -16,39 +17,76 @@ function DrawScreen() {
   const [isExporting, setIsExporting] = useState(false);
 
   const [nodes, setNodes] = useState([
-    { id: 1, label: "A", number: 0, x: -20, y: 10, geometry: 'circle', color: "#FFFFFF" },
-    { id: 2, label: "B", number: 1, x: 20, y: -10, geometry: 'square', color: "#FFFFFF" },
-    { id: 3, label: "C", number: 2, x: -60, y: -10, geometry: 'triangle', color: "#FFFFFF" },
+    {
+      id: 1,
+      label: "A",
+      number: 0,
+      x: -20,
+      y: 10,
+      geometry: "circle",
+      color: "#FFFFFF",
+    },
+    {
+      id: 2,
+      label: "B",
+      number: 1,
+      x: 20,
+      y: -10,
+      geometry: "square",
+      color: "#FFFFFF",
+    },
+    {
+      id: 3,
+      label: "C",
+      number: 2,
+      x: -60,
+      y: -10,
+      geometry: "triangle",
+      color: "#FFFFFF",
+    },
   ]);
   const [edges, setEdges] = useState([
     { id: 1, weight: 1, origin: 0, destination: 1 },
-    { id: 2, weight: 1, origin: 2, destination: 0 }
+    { id: 2, weight: 1, origin: 2, destination: 0 },
   ]);
 
   const [lastNodeNumber, setLastNodeNumber] = useState(0);
 
   const [showMatrix, setShowMatrix] = useState(false);
+  const [showAdjList, setShowAdjList] = useState(false);
   const [showPathInputModal, setShowPathInputModal] = useState(false);
-
   const [activeAlgorithm, setActiveAlgorithm] = useState(Algorithms.NONE);
   const [pathResult, setPathResult] = useState(null);
   const [matrix, setMatrix] = useState(null);
+  const [list, setList] = useState(null);
 
-  const { fetchAdjacencyMatrix, fetchAdjacencyList, fetchPath, fetchDOT, updateGraph } = useGraphAPI(process.env.REACT_APP_API_URL);
+  const {
+    fetchAdjacencyMatrix,
+    fetchAdjacencyList,
+    fetchPath,
+    fetchDOT,
+    updateGraph,
+  } = useGraphAPI(process.env.REACT_APP_API_URL);
 
   function addNewNode(newNode) {
-    setNodes(prev => {
+    setNodes((prev) => {
       const updated = [...prev, newNode];
-      const maxNumber = updated.reduce((max, node) => Math.max(max, node.number), 0);
+      const maxNumber = updated.reduce(
+        (max, node) => Math.max(max, node.number),
+        0,
+      );
       setLastNodeNumber(maxNumber);
       return updated;
     });
   }
 
   function addNewEdge(newEdge) {
-    const exists = edges.some(edge =>
-      (newEdge.origin === edge.origin && newEdge.destination === edge.destination) ||
-      (newEdge.origin === edge.destination && newEdge.destination === edge.origin)
+    const exists = edges.some(
+      (edge) =>
+        (newEdge.origin === edge.origin &&
+          newEdge.destination === edge.destination) ||
+        (newEdge.origin === edge.destination &&
+          newEdge.destination === edge.origin),
     );
 
     if (!exists) {
@@ -57,21 +95,19 @@ function DrawScreen() {
   }
 
   function updateNodePosition(nodeNumber, x, y) {
-    setNodes(prev =>
-      prev.map(node =>
-        node.number === nodeNumber
-          ? { ...node, x, y }
-          : node
-      )
+    setNodes((prev) =>
+      prev.map((node) =>
+        node.number === nodeNumber ? { ...node, x, y } : node,
+      ),
     );
   }
 
   function updateNodeField(field, value, nodeNumber) {
-    setNodes(prevNodes =>
-      prevNodes.map(node => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) => {
         if (node.number === nodeNumber) {
-          if (['x', 'y', 'number'].includes(field)) {
-            if (value === '' || value === '-' || value === '+') {
+          if (["x", "y", "number"].includes(field)) {
+            if (value === "" || value === "-" || value === "+") {
               return { ...node, [field]: value };
             }
 
@@ -86,7 +122,7 @@ function DrawScreen() {
           return { ...node, [field]: value };
         }
         return node;
-      })
+      }),
     );
   }
 
@@ -124,7 +160,7 @@ function DrawScreen() {
       const data = await fetchDOT(edges, nodes.length);
       if (data.message) return;
 
-      const blob = new Blob([data.dot], { type: 'text/plain;charset=utf-8' });
+      const blob = new Blob([data.dot], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -133,7 +169,6 @@ function DrawScreen() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-
     } catch (e) {
       console.error("Error generating DOT file:", e);
       alert("Erro ao gerar arquivo DOT.");
@@ -143,10 +178,10 @@ function DrawScreen() {
   async function handleSave() {
     if (!logged) return;
 
-    const token = 'Bearer token';
+    const token = "Bearer token";
     const graph_id = 1;
 
-    try{
+    try {
       const data = await updateGraph(nodes, edges, token, graph_id);
       if (data.message) return;
 
@@ -159,7 +194,14 @@ function DrawScreen() {
 
   async function handleRunAlgorithm(source, destination) {
     try {
-      const data = await fetchPath(edges, nodes.length, source, destination, activeAlgorithm, 'matrix');
+      const data = await fetchPath(
+        edges,
+        nodes.length,
+        source,
+        destination,
+        activeAlgorithm,
+        "matrix",
+      );
       setPathResult(data);
     } catch (e) {
       alert("Erro ao buscar caminho.");
@@ -183,9 +225,10 @@ function DrawScreen() {
   async function getAdjacencyList() {
     try {
       const data = await fetchAdjacencyList(edges, nodes.length);
-      console.log(data);
+      setList(data.graph);
     } catch (e) {
       alert("Erro ao buscar lista de adjacência.");
+      setList();
     }
   }
 
@@ -197,7 +240,9 @@ function DrawScreen() {
   function handleInputSubmit(src, dst) {
     const source = parseInt(src);
     const destination = parseInt(dst);
-    const valid = nodes.some(n => n.number === source) && nodes.some(n => n.number === destination);
+    const valid =
+      nodes.some((n) => n.number === source) &&
+      nodes.some((n) => n.number === destination);
 
     if (!valid || isNaN(source) || isNaN(destination)) {
       alert("Origem ou destino inválido.");
@@ -208,16 +253,22 @@ function DrawScreen() {
     handleRunAlgorithm(source, destination);
   }
 
-
   useEffect(() => {
-    const maxNumber = nodes.reduce((max, node) => Math.max(max, node.number), 0);
+    const maxNumber = nodes.reduce(
+      (max, node) => Math.max(max, node.number),
+      0,
+    );
     setLastNodeNumber(maxNumber);
-  }, [])
+  }, []);
 
   return (
     <>
       <NavbarGraph logged={logged} />
-      <GraphHeader exportPNG={exportPNG} exportDOT={exportDOT} handleSave={handleSave} />
+      <GraphHeader
+        exportPNG={exportPNG}
+        exportDOT={exportDOT}
+        handleSave={handleSave}
+      />
       <Board
         canvasRef={canvasRef}
         isExporting={isExporting}
@@ -246,6 +297,11 @@ function DrawScreen() {
         setShowPathInputModal={setShowPathInputModal}
         handleInputSubmit={handleInputSubmit}
       />
+      <AdjListModal
+        showAdjList={showAdjList}
+        setShowAdjList={setShowAdjList}
+        adjacencyList={buildAdjacencyList()}
+      />
 
       {activeAlgorithm !== Algorithms.NONE && pathResult && (
         <PathModal
@@ -265,3 +321,4 @@ function DrawScreen() {
 }
 
 export default DrawScreen;
+

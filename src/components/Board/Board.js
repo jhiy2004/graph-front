@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
-import Canvas from '../Canvas/Canvas.js';
-import Toolbar from '../Toolbar/Toolbar.js';
-import AlgorithmsBar from '../AlgorithmsBar/AlgorithmsBar.js';
-import VertexMenu from '../VertexMenu/VertexMenu.js';
-import { Modes } from '../../utils/modes.js';
+import React, { useRef, useState } from "react";
+import Canvas from "../Canvas/Canvas.js";
+import Toolbar from "../Toolbar/Toolbar.js";
+import AlgorithmsBar from "../AlgorithmsBar/AlgorithmsBar.js";
+import VertexMenu from "../VertexMenu/VertexMenu.js";
+import { Modes } from "../../utils/modes.js";
 
-import './Board.css';
+import "./Board.css";
 
 function Board({
   canvasRef,
@@ -20,7 +20,7 @@ function Board({
   getAdjacencyMatrix,
   getAdjacencyList,
   lastNodeNumber,
-  setLastNodeNumber
+  setLastNodeNumber,
 }) {
   const sectionRef = useRef(null);
   const [zoomAction, setZoomAction] = useState(null);
@@ -30,9 +30,8 @@ function Board({
   const [dragPreviewTemplate, setDragPreviewTemplate] = useState(null);
   const [edgeModeNodes, setEdgeModeNodes] = useState({ origin: null });
 
-
-  function handleModeChange(newMode){
-    if(activeMode === Modes.EDGE){
+  function handleModeChange(newMode) {
+    if (activeMode === Modes.EDGE) {
       setEdgeModeNodes({ origin: null });
     }
 
@@ -40,9 +39,13 @@ function Board({
   }
 
   return (
-    <section className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start" ref={sectionRef}>
+    <section
+      className="d-flex flex-row flex-grow-1 flex-wrap board-container justify-content-start"
+      ref={sectionRef}
+    >
       <div className="z-1 flex-grow-0 mt-1 ms-1">
-        <Toolbar setZoomAction={setZoomAction}
+        <Toolbar
+          setZoomAction={setZoomAction}
           activeMode={activeMode}
           handleModeChange={handleModeChange}
           setDragPreviewTemplate={setDragPreviewTemplate}
@@ -52,7 +55,7 @@ function Board({
       <Canvas
         canvasRef={canvasRef}
         isExporting={isExporting}
-        className="w-100 h-100 d-block position-absolute" 
+        className="w-100 h-100 d-block position-absolute"
         nodes={nodes}
         edges={edges}
         selectedNodeNumber={selectedNodeNumber}
