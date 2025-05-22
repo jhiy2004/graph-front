@@ -5,7 +5,7 @@ import GraphHeaderButton from '../GraphHeaderButton/GraphHeaderButton.js';
 
 import './UserGraphsHeader.css'
 
-function UserGraphsHeader() {
+function UserGraphsHeader({ handleCreateButton }) {
     return (
         <header className="user-graphs-header p-1">
             <Stack direction="horizontal" className="px-5 py-2">
@@ -14,7 +14,7 @@ function UserGraphsHeader() {
                     <p className="fw-bold mb-0">Grafos</p>
                 </Stack>
                 <Stack direction="horizontal" gap={3} className="ms-auto">
-                    <GraphHeaderButton type="add" onClick={() => {console.log("Clicou em novo grafo")}}/>
+                    <GraphHeaderButton type="add" onClick={handleCreateButton}/>
                     <GraphHeaderButton type="import" onClick={() => {console.log("Clicou em importar")}}/>
                 </Stack>
             </Stack>
