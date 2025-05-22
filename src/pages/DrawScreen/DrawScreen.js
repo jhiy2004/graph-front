@@ -228,8 +228,10 @@ function DrawScreen() {
       setList(data.graph);
     } catch (e) {
       alert("Erro ao buscar lista de adjacência.");
-      setList();
+      setList([]);
     }
+
+    setShowAdjList(true);
   }
 
   function handleInputAlgorithm(algorithm) {
@@ -300,7 +302,7 @@ function DrawScreen() {
       <AdjListModal
         showAdjList={showAdjList}
         setShowAdjList={setShowAdjList}
-        adjacencyList={buildAdjacencyList()}
+        adjacencyList={list}
       />
 
       {activeAlgorithm !== Algorithms.NONE && pathResult && (
