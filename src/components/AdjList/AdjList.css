@@ -1,0 +1,43 @@
+.adj-list-container {
+  padding: 1rem;
+  font-family: monospace;
+  background-color: #fff;
+}
+
+.adj-list-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.vertex-label {
+  padding: 0.6rem 0.6rem;
+  border: 2px solid black;
+  border-right: 0px;
+  display: inline-block;
+  width: 55px;
+  text-align: center;
+  height: 40px;
+  font-weight: bold;
+}
+
+.adj-node {
+  display: flex;
+  align-items: center;
+}
+
+.node-box {
+  border: 2px solid black;
+  border-right: 0px;
+  padding: 0.6rem 0.6rem;
+  display: inline-block;
+  width: 55px;
+  text-align: center;
+  height: 40px;
+  font-weight: bold;
+}
+
+.null-label {
+  color: black;
+  font-weight: bold;
+}
