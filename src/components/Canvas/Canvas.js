@@ -142,7 +142,7 @@ function Canvas({
       if (found) {
         if (!edgeModeNodes.origin) {
           setEdgeModeNodes({ origin: found });
-        } else {
+        } else if(found !== edgeModeNodes.origin) {
           const newEdge = {
             id: null,
             weight: 1,
