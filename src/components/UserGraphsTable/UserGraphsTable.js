@@ -1,7 +1,14 @@
 import React from "react";
 import UserGraphsRow from "../UserGraphsRow/UserGraphsRow";
+import { useNavigate } from "react-router";
 
 function UserGraphsTable({ graphs }) {
+  const navigate = useNavigate();
+
+  function handleClick(graphID) {
+    navigate(`/draw/${graphID}`);
+  }
+
   return (
     <div className="px-5">
       <table className="table">
@@ -21,7 +28,7 @@ function UserGraphsTable({ graphs }) {
               autor={graph.user_name}
               criacao={graph.date_modified}
               modificacao={graph.date_modified}
-              onClick={() => console.log("Clicou no grafo", graph.name)}
+              onClick={() => handleClick(graph.id)}
             />
           ))}
         </tbody>
