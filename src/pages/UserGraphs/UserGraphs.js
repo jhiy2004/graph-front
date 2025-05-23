@@ -11,34 +11,31 @@ function UserGraphs() {
   const [showNameModal, setShowNameModal] = useState(false);
   const [graphs, setGraphs] = useState([
     {
-      "id": 1,
-      "name": "Social Network",
-      "date_modified": "2025-05-21T21:29:33.382Z",
-      "user_name": "Alice",
-      "vertices": [],
-      "edges": []
-    }
+      id: 1,
+      name: "Social Network",
+      date_modified: "2025-05-21T21:29:33.382Z",
+      user_name: "Alice",
+      vertices: [],
+      edges: [],
+    },
   ]);
 
   const { createGraph } = useGraphAPI(process.env.REACT_APP_API_URL);
 
-  function handleCreateButton(){
+  function handleCreateButton() {
     setShowNameModal(true);
   }
 
-  async function handleNameModalSubmit(name){
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ3ODc2MDMyLCJleHAiOjE3NDc4NzYzMzJ9.RnR4UtopFRDTDnUPmT6mryLMA1bbUwUrRin5j_jtIc0';
+  async function handleNameModalSubmit(name) {
+    const token = localStorage.getItem("token");
     setShowNameModal(false);
 
-    try{
+    try {
       const graph = await createGraph(name, token);
-      setGraphs([
-        ...graphs,
-        graph
-      ])
+      setGraphs([...graphs, graph]);
 
       console.log(graph);
-    } catch(e) {
+    } catch (e) {
       console.error("Error ao criar grafo.");
       alert("Error ao criar grafo.");
     }
@@ -48,7 +45,7 @@ function UserGraphs() {
     <>
       <div className={styles.userGraphsPage}>
         <NavBarGraph logged={true} />
-        <UserGraphsHeader handleCreateButton={handleCreateButton}/>
+        <UserGraphsHeader handleCreateButton={handleCreateButton} />
         <UserGraphsTable graphs={graphs} />
       </div>
 

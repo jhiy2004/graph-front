@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router";
 
 import Board from "../../components/Board/Board.js";
 import GraphHeader from "../../components/GraphHeader/GraphHeader.js";
@@ -15,40 +16,10 @@ function DrawScreen() {
   const [logged, setLogged] = useState(true);
   const canvasRef = useRef(null);
   const [isExporting, setIsExporting] = useState(false);
+  const { graph_id } = useParams();
 
-  const [nodes, setNodes] = useState([
-    {
-      id: 1,
-      label: "A",
-      number: 0,
-      x: -20,
-      y: 10,
-      geometry: "circle",
-      color: "#FFFFFF",
-    },
-    {
-      id: 2,
-      label: "B",
-      number: 1,
-      x: 20,
-      y: -10,
-      geometry: "square",
-      color: "#FFFFFF",
-    },
-    {
-      id: 3,
-      label: "C",
-      number: 2,
-      x: -60,
-      y: -10,
-      geometry: "triangle",
-      color: "#FFFFFF",
-    },
-  ]);
-  const [edges, setEdges] = useState([
-    { id: 1, weight: 1, origin: 0, destination: 1 },
-    { id: 2, weight: 1, origin: 2, destination: 0 },
-  ]);
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
 
   const [lastNodeNumber, setLastNodeNumber] = useState(0);
 
@@ -66,6 +37,7 @@ function DrawScreen() {
     fetchPath,
     fetchDOT,
     updateGraph,
+    fetchGraph,
   } = useGraphAPI(process.env.REACT_APP_API_URL);
 
   function addNewNode(newNode) {
@@ -179,7 +151,6 @@ function DrawScreen() {
     if (!logged) return;
 
     const token = "Bearer token";
-    const graph_id = 1;
 
     try {
       const data = await updateGraph(nodes, edges, token, graph_id);
@@ -256,12 +227,20 @@ function DrawScreen() {
   }
 
   useEffect(() => {
-    const maxNumber = nodes.reduce(
-      (max, node) => Math.max(max, node.number),
-      0,
-    );
-    setLastNodeNumber(maxNumber);
-  }, []);
+    if (!logged) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Usuário não autenticado.");
+      return;
+    }
+    fetchGraph(graph_id, token)
+      .then((data) => {
+        setNodes(data.vertices);
+        setEdges(data.edges);
+      })
+      .catch(() => alert("Erro ao carregar o grafo."));
+  }, [graph_id, logged]);
 
   return (
     <>

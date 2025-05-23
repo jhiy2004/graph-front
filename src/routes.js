@@ -7,7 +7,7 @@ import RegisterForm from "./pages/RegisterForm/RegisterForm.js";
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/draw" element={<DrawScreen />} />
+      <Route path="/draw/:graph_id" element={<DrawScreen />} />
       <Route path="/user/graphs" element={<UserGraphs />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
@@ -16,4 +16,3 @@ function AppRoutes() {
 }
 
 export default AppRoutes;
-
