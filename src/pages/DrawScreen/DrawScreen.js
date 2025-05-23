@@ -234,8 +234,6 @@ function DrawScreen() {
       alert("Usuário não autenticado.");
       return;
     }
-    console.log(token);
-
     fetchGraph(graph_id, token)
       .then((data) => {
         setNodes(data.vertices);

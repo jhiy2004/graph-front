@@ -26,7 +26,6 @@ export function useGraphAPI(apiUrl) {
       throw e;
     }
 
-    console.log(data);
     return data;
   };
 
