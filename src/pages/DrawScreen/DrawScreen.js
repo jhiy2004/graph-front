@@ -10,7 +10,7 @@ import PathModal from "../../components/PathModal/PathModal.js";
 import PathInputModal from "../../components/PathInputModal/PathInputModal.js";
 
 import { Algorithms } from "../../utils/algorithms.js";
-import { useGraphAPI } from "./useGraphAPI.js";
+import { useGraphAPI } from "../../hooks/useGraphAPI.js";
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
@@ -234,37 +234,55 @@ function DrawScreen() {
       alert("Usuário não autenticado.");
       return;
     }
+
     fetchGraph(graph_id, token)
       .then((data) => {
         setNodes(data.vertices);
-        setEdges(data.edges);
+
+        const idToNumber = new Map(data.vertices.map((v) => [v.id, v.number]));
+
+        const remappedEdges = data.edges.map((edge) => ({
+          ...edge,
+          origin: idToNumber.get(edge.origin),
+          destination: idToNumber.get(edge.destination),
+        }));
+
+        setEdges(remappedEdges);
+
+        const maxNumber = data.vertices.reduce(
+          (max, node) => Math.max(max, node.number),
+          0
+        );
+        setLastNodeNumber(maxNumber);
       })
       .catch(() => alert("Erro ao carregar o grafo."));
   }, [graph_id, logged]);
 
   return (
     <>
-      <NavbarGraph logged={logged} />
-      <GraphHeader
-        exportPNG={exportPNG}
-        exportDOT={exportDOT}
-        handleSave={handleSave}
-      />
-      <Board
-        canvasRef={canvasRef}
-        isExporting={isExporting}
-        nodes={nodes}
-        edges={edges}
-        handleInputAlgorithm={handleInputAlgorithm}
-        addNewEdge={addNewEdge}
-        addNewNode={addNewNode}
-        updateNodePosition={updateNodePosition}
-        updateNodeField={updateNodeField}
-        getAdjacencyMatrix={getAdjacencyMatrix}
-        getAdjacencyList={getAdjacencyList}
-        lastNodeNumber={lastNodeNumber}
-        setLastNodeNumber={setLastNodeNumber}
-      />
+      <div className="vh-100 d-flex flex-column">
+        <NavbarGraph logged={logged} />
+        <GraphHeader
+          exportPNG={exportPNG}
+          exportDOT={exportDOT}
+          handleSave={handleSave}
+        />
+        <Board
+          canvasRef={canvasRef}
+          isExporting={isExporting}
+          nodes={nodes}
+          edges={edges}
+          handleInputAlgorithm={handleInputAlgorithm}
+          addNewEdge={addNewEdge}
+          addNewNode={addNewNode}
+          updateNodePosition={updateNodePosition}
+          updateNodeField={updateNodeField}
+          getAdjacencyMatrix={getAdjacencyMatrix}
+          getAdjacencyList={getAdjacencyList}
+          lastNodeNumber={lastNodeNumber}
+          setLastNodeNumber={setLastNodeNumber}
+        />
+      </div>
 
       <MatrixModal
         showMatrix={showMatrix}

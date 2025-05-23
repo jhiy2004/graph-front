@@ -90,8 +90,8 @@ function Canvas({
     drawCenterCross(ctx, cam);
 
     for (const edge of edges) {
-      const a = nodes[edge.origin];
-      const b = nodes[edge.destination];
+      const a = nodes.find((node) => node.number === edge.origin);
+      const b = nodes.find((node) => node.number === edge.destination);
       if (a && b) connectNodes(ctx, a, b);
     }
 
@@ -142,7 +142,7 @@ function Canvas({
       if (found) {
         if (!edgeModeNodes.origin) {
           setEdgeModeNodes({ origin: found });
-        } else {
+        } else if(found !== edgeModeNodes.origin) {
           const newEdge = {
             id: null,
             weight: 1,
