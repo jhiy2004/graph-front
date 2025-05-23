@@ -5,7 +5,7 @@ import UserGraphsTable from "../../components/UserGraphsTable/UserGraphsTable.js
 import NameModal from "../../components/NameModal/NameModal.js";
 
 import styles from "./UserGraphs.module.scss";
-import { useGraphAPI } from "../DrawScreen/useGraphAPI.js";
+import { useGraphAPI } from "../../hooks/useGraphAPI.js";
 
 function UserGraphs() {
   const [showNameModal, setShowNameModal] = useState(false);

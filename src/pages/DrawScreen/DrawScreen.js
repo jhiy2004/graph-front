@@ -10,7 +10,7 @@ import PathModal from "../../components/PathModal/PathModal.js";
 import PathInputModal from "../../components/PathInputModal/PathInputModal.js";
 
 import { Algorithms } from "../../utils/algorithms.js";
-import { useGraphAPI } from "./useGraphAPI.js";
+import { useGraphAPI } from "../../hooks/useGraphAPI.js";
 
 function DrawScreen() {
   const [logged, setLogged] = useState(true);
