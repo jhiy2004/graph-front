@@ -78,5 +78,24 @@ export function useGraphAPI(apiUrl){
         return data;
     }
 
-    return { fetchAdjacencyMatrix, fetchAdjacencyList, fetchPath, fetchDOT, updateGraph };
+    const createGraph = async (name, token) => {
+        const auth = `Bearer ${token}` ;
+        const res = await fetch(`${apiUrl}/graphs/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': auth
+            },
+            body: JSON.stringify({
+                name: name
+            })
+        })
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        return data;
+    }
+
+    return { fetchAdjacencyMatrix, fetchAdjacencyList, fetchPath, fetchDOT, updateGraph, createGraph };
 }

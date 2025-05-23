@@ -17,11 +17,11 @@ function UserGraphsTable({ graphs }) {
           {graphs.map((graph, index) => (
             <UserGraphsRow
               key={index}
-              nome={graph.nome}
-              autor={graph.autor}
-              criacao={graph.criacao}
-              modificacao={graph.modificacao}
-              onClick={() => console.log("Clicou no grafo", graph.nome)}
+              nome={graph.name}
+              autor={graph.user_name}
+              criacao={graph.date_modified}
+              modificacao={graph.date_modified}
+              onClick={() => console.log("Clicou no grafo", graph.name)}
             />
           ))}
         </tbody>
